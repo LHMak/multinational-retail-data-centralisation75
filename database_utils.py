@@ -2,10 +2,14 @@
 import yaml
 
 class Database_connector:
-    def read_db_credentials(file):
+    def __init__(self):
+        self.db_creds = None
+    def read_db_creds(self):
         with open('db_creds.yaml', 'r') as creds:
-            db_creds = yaml.safe_load(creds)
-            print(db_creds)
-            #Error when calling method as Python's cwd is c:/Users/liamf
+            self.db_creds = yaml.safe_load(creds)
+            return self.db_creds
+    def init_db_engine(self):
+        print(self.db_creds)
 
-Database_connector.read_db_credentials('db_creds.yaml')
+
+Database_connector.read_db_creds('db_creds.yaml')
