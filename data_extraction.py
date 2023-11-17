@@ -1,9 +1,11 @@
 # Defining data extractor class
-from database_utils import Database_connector as db
+from database_utils import DatabaseConnector
 
 class DataExtractor:
-    def test():
-        db.list_db_tables()
+    # TODO create function to read the data from the RDS database
+    # Once this works, make the function extract the
+    # database table to a pandas DataFrame.
 
-data = DataExtractor()
-data.test()
+    # should this method take engine as argument to
+    # connect to database?
+    def read_rds_table():
