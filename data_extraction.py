@@ -1,5 +1,9 @@
 # Defining data extractor class
+from database_utils import Database_connector as db
 
 class DataExtractor:
-    def __init__ (self, param1): #placeholder parameter
-        self.param1 = 0
+    def test():
+        db.list_db_tables()
+
+data = DataExtractor()
+data.test()
