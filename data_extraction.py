@@ -9,6 +9,6 @@ class DataExtractor:
         with engine.connect() as conn:
             result = conn.execute(text(f"SELECT * FROM {chosen_table}"))
             df_result = pd.DataFrame(result)
-            print(df_result.head(10))
+            # print(df_result.head(10))
             return df_result
     

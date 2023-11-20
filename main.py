@@ -1,10 +1,13 @@
 from database_utils import DatabaseConnector
 from data_extraction import DataExtractor
+from data_cleaning import DataCleaning
 
-#instantialising DatabaseConnector
+# instantialising DatabaseConnector
 connection = DatabaseConnector()
-#instantialising DataExtractor
+# instantialising DataExtractor
 extractor = DataExtractor()
+# instantialising DataCleaning
+cleaner = DataCleaning()
 # Assigning database credentials to variable
 legacy_db_creds = 'db_creds.yaml'
 
@@ -29,7 +32,7 @@ def choose_table():
 # of the userdata and perform data cleaning on it.
 # Currently, this function creates the dataframe
 # TODO: add data cleaning functionality
-def clean_user_data():
+def user_data_cleaner():
     # gather database credentials from file
     creds = connection.read_db_creds(legacy_db_creds)
     # create engine from credentials
@@ -39,9 +42,11 @@ def clean_user_data():
     # index list of tables to select user data
     user_data = table_list[1]
     # return dataframe of chosen data contents
-    table_read = extractor.read_rds_table(engine, user_data)
+    raw_user_data_df = extractor.read_rds_table(engine, user_data)
+    # send df_user_data for cleaning
+    clean_user_data_df = cleaner.clean_user_data(raw_user_data_df)
 
-clean_user_data()
+user_data_cleaner()
 
 
 
