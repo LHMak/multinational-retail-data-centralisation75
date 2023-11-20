@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
 from dateutil.parser import parse
-#pd.set_option('display.max_columns', None)
+
 # Defining data cleaner class
 
 class DataCleaning:
@@ -18,17 +17,19 @@ class DataCleaning:
         df_string_cols = list(df[['first_name', 'last_name', 'company', 'email_address',
                              'country', 'country_code', 'user_uuid']])
         df[df_string_cols] = df[df_string_cols].astype('string')
-        # replace new line char in address column with ,
+        # replace new line char in address column with ', '
         # down the line, may need to use regex expression instead
         df['address'] = df['address'].str.replace('\n',', ')
         df.info()
         print(df.head(10))
 
         print("\n--- Casting date columns ---\n")
+        # using parse to catch date formats that pd.to_datetime would miss
         df['date_of_birth'] = df['date_of_birth'].apply(parse)
+        # parse raises following error:
+        # dateutil.parser._parser.ParserError: Unknown string format: KBTI7FI7Y3
 
+        # using pd.to_datetime to convert date formats, errors return NaT
         df['date_of_birth'] = pd.to_datetime(df['date_of_birth'], infer_datetime_format=True, errors='coerce')
-        # df_date_cols = list(df[['date_of_birth', 'join_date']])
-        # df[df_date_cols] = pd.to_datetime(df[df_date_cols])
 
         df.info()
