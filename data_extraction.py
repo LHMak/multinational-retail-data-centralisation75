@@ -25,10 +25,11 @@ class DataExtractor:
         # Resets index column on dataframe
         pdf_data.reset_index(drop = True, inplace=True)
 
-        # Casting columns as relevant data types
-        stripped_card_no = pdf_data['card_number'].astype('string').str.replace('[^0-9]', '', regex=True)
-        #stripped_card_no = stripped_card_no.str.strip('?NULL')
-        stripped_card_no= stripped_card_no.fillna(value=np.nan)
-        stripped_card_no = stripped_card_no.astype('float64')
-        # ValueError: could not convert string to float: ''
-        stripped_card_no.info()
+        # Cleaning card_number column by casting as string, removing non numeric characters
+        # Then converting to numeric data and finally dropping null values
+        pdf_data['card_number'] = pdf_data['card_number'].astype('string').str.replace(r'[^0-9]+', '', regex=True)
+        pdf_data['card_number'] = pd.to_numeric(pdf_data['card_number'])
+        null_card_no = pdf_data.loc[pdf_data['card_number'].isnull()]
+        pdf_data = pdf_data.drop(null_card_no.index)
+        pdf_data.info()
+
