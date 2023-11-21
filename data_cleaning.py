@@ -10,8 +10,6 @@ class DataCleaning:
     # values, errors with dates, incorrectly typed values
     # and rows filled with the wrong information.    
     def clean_user_data (self, df):
-        print("--- raw df info ---")
-        df.info()
 
         # set index to column 1 and sort by ascending
         df.set_index(df.columns[0], inplace = True)
@@ -19,7 +17,6 @@ class DataCleaning:
 
         # Casting string columns
         df['address'] = df['address'].str.replace('\n', ', ')
-        df.info()
         df_string_cols = list(df[['first_name', 'last_name', 'company', 'email_address',
                              'country', 'country_code', 'user_uuid', 'address', 'phone_number']])
         df[df_string_cols] = df[df_string_cols].astype('string')
@@ -34,8 +31,6 @@ class DataCleaning:
         null_join_dates = df['join_date'].isnull()
         problem_dates = df[(null_dobs) | (null_join_dates)]
         df = df.drop(problem_dates.index)
-        df.info()
-        show(df)
 
 
 
