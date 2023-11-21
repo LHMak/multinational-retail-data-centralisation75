@@ -2,6 +2,7 @@
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 import pandas as pd
+import tabula
 
 class DataExtractor:
     # Takes engine and table as arguments, returns table contents as a Pandas Dataframe
@@ -11,4 +12,7 @@ class DataExtractor:
             df_result = pd.DataFrame(result)
             # print(df_result.head(10))
             return df_result
-    
+    def retrieve_pdf_data(self, link):
+        # Read pdf into list of DataFrame
+        pdf_data = tabula.read_pdf(link, pages='all')
+        return pdf_data

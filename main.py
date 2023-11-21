@@ -16,7 +16,7 @@ sales_data_creds = 'sales_data_creds.yaml'
 
 # This method displays a list of all tables in Amazon RDS
 # and prompts the user to choose one, returning
-# a Pandas dataframe of the db
+# a Pandas dataframe of the table
 def choose_table():
     # gather database credentials from file
     rds_creds = connection.read_db_creds(rds_db_creds)
@@ -43,9 +43,15 @@ def user_data_cleaner():
     # Upload cleaned user data to local database
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     local_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    connection.upload_to_db(local_engine, clean_user_data_df, 'dim_users') # upload clean data to local database
+    clean_user_data_upload = connection.upload_to_db(local_engine, clean_user_data_df, 'dim_users') # upload clean data to local database
     
-user_data_cleaner()
+#user_data_cleaner()
+
+def clean_card_data():
+    link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
+    card_data = extractor.retrieve_pdf_data(link)
+    card_data.info()
+clean_card_data()
 
 
 
