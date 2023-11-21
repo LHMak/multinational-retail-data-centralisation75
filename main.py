@@ -50,7 +50,7 @@ def user_data_cleaner():
 def clean_card_data():
     link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
     card_data = extractor.retrieve_pdf_data(link)
-    card_data.info()
+
 clean_card_data()
 
 
