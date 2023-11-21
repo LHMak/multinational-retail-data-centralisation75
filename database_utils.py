@@ -3,6 +3,7 @@ import yaml
 from sqlalchemy.engine import Engine
 from sqlalchemy import create_engine
 from sqlalchemy import inspect
+from pandas import DataFrame
 
 class DatabaseConnector:
     # Takes config file as argument, returns dict (hopefully) of credentials
@@ -21,3 +22,5 @@ class DatabaseConnector:
         with engine.connect() as conn:
             inspector = inspect(engine)
             return inspector.get_table_names()
+    def upload_to_db(self, engine: Engine, dataframe: DataFrame, table_name: str):
+        dataframe.to_sql(table_name, engine, if_exists='replace')

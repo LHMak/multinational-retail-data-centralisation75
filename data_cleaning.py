@@ -31,6 +31,7 @@ class DataCleaning:
         null_join_dates = df['join_date'].isnull()
         problem_dates = df[(null_dobs) | (null_join_dates)]
         df = df.drop(problem_dates.index)
+        return df
 
 
 
