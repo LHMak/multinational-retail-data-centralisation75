@@ -32,6 +32,29 @@ class DataCleaning:
         problem_dates = df[(null_dobs) | (null_join_dates)]
         df = df.drop(problem_dates.index)
         return df
+    def clean_card_data(self, raw_card_data):
+        # Cleans card_number column by casting as string and removing non numeric characters,
+        # then converts to numeric data and finally drops null values
+        raw_card_data['card_number'] = raw_card_data['card_number'].astype('string').str.replace(r'[^0-9]+', '', regex=True)
+        raw_card_data['card_number'] = pd.to_numeric(raw_card_data['card_number'])
+        null_card_no = raw_card_data.loc[raw_card_data['card_number'].isnull()]
+        raw_card_data = raw_card_data.drop(null_card_no.index)
+        raw_card_data['card_number'] = raw_card_data['card_number'].astype('int64')
+
+
+        # Casts exp_date as datetime64, drops null values then formats as mm/yy
+        raw_card_data['expiry_date'] = pd.to_datetime(raw_card_data['expiry_date'], format='%m/%y', errors='coerce')
+        null_exp_date = raw_card_data.loc[raw_card_data['expiry_date'].isnull()]
+        raw_card_data = raw_card_data.drop(null_exp_date.index)
+        raw_card_data['expiry_date'] = raw_card_data['expiry_date'].dt.strftime('%m/%y')
+
+        # Cassts date_payment_confirmed as datetime64, then removing time component
+        raw_card_data['date_payment_confirmed'] = pd.to_datetime(raw_card_data['date_payment_confirmed'], format='mixed')
+        raw_card_data['date_payment_confirmed'] = raw_card_data['date_payment_confirmed'].dt.date
+        
+        # Resets index column on dataframe
+        raw_card_data.reset_index(drop = True, inplace=True)
+        return raw_card_data
 
 
 

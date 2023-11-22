@@ -42,14 +42,21 @@ def user_data_cleaner():
 
     # Upload cleaned user data to local database
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
-    local_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    clean_user_data_upload = connection.upload_to_db(local_engine, clean_user_data_df, 'dim_users') # upload clean data to local database
+    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
+    clean_user_data_upload = connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to local database
     
 #user_data_cleaner()
 
 def clean_card_data():
+    # Retrieve and clean card payment data from pdf in link
     link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
-    card_data = extractor.retrieve_pdf_data(link)
+    raw_card_data = extractor.retrieve_pdf_data(link)
+    clean_card_data = cleaner.clean_card_data(raw_card_data)
+
+    # Upload cleaned user data to local database
+    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
+    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
+    clean_card_data_upload = connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to local database
 
 clean_card_data()
 
