@@ -2,6 +2,7 @@ from database_utils import DatabaseConnector
 from data_extraction import DataExtractor
 from data_cleaning import DataCleaning
 import pandas as pd
+from pandasgui import show
 
 # instantialising DatabaseConnector
 connection = DatabaseConnector()
@@ -14,7 +15,7 @@ rds_db_creds = 'db_creds.yaml'
 sales_data_creds = 'sales_data_creds.yaml'
 # Assigning endpoints and header dictionary to connect to store data API
 num_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
-retrieve_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
+
 header_dict = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
 
 
@@ -70,8 +71,14 @@ def clean_card_data():
 
 def list_num_stores():
     num_stores = extractor.list_number_of_stores(num_stores_endpoint, header_dict)
-    print(num_stores)
+    return num_stores
 
-list_num_stores()
 
+
+def extract_store_data():
+    retrieve_store_endpoint_base = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
+    num_stores = list_num_stores()
+    store_data = extractor.retrieve_stores_data(retrieve_store_endpoint_base, header_dict, num_stores)
+
+extract_store_data()
 
