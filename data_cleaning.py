@@ -32,6 +32,8 @@ class DataCleaning:
         problem_dates = df[(null_dobs) | (null_join_dates)]
         df = df.drop(problem_dates.index)
         return df
+    
+
     def clean_card_data(self, raw_card_data):
         # Cleans card_number column by casting as string and removing non numeric characters,
         # then converts to numeric data and finally drops null values
@@ -40,7 +42,6 @@ class DataCleaning:
         null_card_no = raw_card_data.loc[raw_card_data['card_number'].isnull()]
         raw_card_data = raw_card_data.drop(null_card_no.index)
         raw_card_data['card_number'] = raw_card_data['card_number'].astype('int64')
-
 
         # Casts exp_date as datetime64, drops null values then formats as mm/yy
         raw_card_data['expiry_date'] = pd.to_datetime(raw_card_data['expiry_date'], format='%m/%y', errors='coerce')
@@ -55,6 +56,27 @@ class DataCleaning:
         # Resets index column on dataframe
         raw_card_data.reset_index(drop = True, inplace=True)
         return raw_card_data
+    
+
+    def clean_store_data(self, raw_store_data):
+        print('\n\n\n----- raw data ------\n')
+        raw_store_data.info()
+        print(raw_store_data.head(10))
+        # Removes 'lat' and 'message' column as they look erroneous
+        raw_store_data = raw_store_data.drop(['lat', 'message'], axis=1)
+
+        #----- converting cols to numeric ------
+        numeric_cols = ['longitude', 'latitude', 'staff_numbers']
+        raw_store_data[numeric_cols] = raw_store_data[numeric_cols].apply(pd.to_numeric, errors='coerce')
+        
+
+        #----- converting open_date to date ------#
+        raw_store_data['opening_date'] = pd.to_datetime(raw_store_data['opening_date'], format='mixed', errors='coerce')
+        #------ drop rows where 'longitude', 'latitude', 'staff_numbers', 'opening_date' are null
+        numerics_date = ['longitude', 'latitude', 'staff_numbers', 'opening_date']
+        null_numerics_date = raw_store_data[raw_store_data[numerics_date].isna().all(axis=1)]
+        raw_store_data = raw_store_data.drop(null_numerics_date.index)
+        print(raw_store_data.info(), raw_store_data.head(10))
 
 
 

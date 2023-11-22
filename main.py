@@ -78,7 +78,12 @@ def list_num_stores():
 def extract_store_data():
     retrieve_store_endpoint_base = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
     num_stores = list_num_stores()
-    store_data = extractor.retrieve_stores_data(retrieve_store_endpoint_base, header_dict, num_stores)
+    #store_data = extractor.retrieve_stores_data(retrieve_store_endpoint_base, header_dict, num_stores)
+    # Above line commented out to avoid regenerating the store_data dataframe every time script is run
+    # make sure to un-comment and delete code below
+    store_data = pd.read_csv('store_data_csv.csv', index_col='index')
+    store_data.reset_index(drop=True, inplace=True)
+    clean_store_data = cleaner.clean_store_data(store_data)
 
 extract_store_data()
 
