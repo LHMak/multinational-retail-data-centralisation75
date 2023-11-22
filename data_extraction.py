@@ -2,10 +2,9 @@
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 from pandasgui import show
-#from datetime import date as dt
 import pandas as pd
 import tabula
-import numpy as np
+import requests
 
 
 class DataExtractor:
@@ -27,3 +26,9 @@ class DataExtractor:
             list_of_dfs.append(df)
         raw_card_data = pd.concat(list_of_dfs)
         return raw_card_data
+    
+    # Error: <Response [403]>
+    def list_number_of_stores(self,num_stores_endpoint, header_dict):
+        num_stores_response = requests.get(num_stores_endpoint, header_dict)
+        print(f'The request url being made is: {num_stores_response.url}')
+        return num_stores_response

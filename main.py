@@ -12,6 +12,10 @@ cleaner = DataCleaning()
 # Assigning database credentials to variable
 rds_db_creds = 'db_creds.yaml'
 sales_data_creds = 'sales_data_creds.yaml'
+# Assigning endpoints and header dictionary to connect to store data API
+num_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
+retrieve_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
+header_dict = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
 
 
 # This method displays a list of all tables in Amazon RDS
@@ -27,7 +31,9 @@ def choose_table():
     chosen_table = input(f"Select a table to view from:\n{table_list}: ")
     # return dataframe of chosen data contents
     table_read = extractor.read_rds_table(engine, chosen_table)
+
 #choose_table()
+
 
 # Connects to Amazon RDS and retrieves raw user_data,
 # converts it to a dataframe, then returns cleaned user_data
@@ -47,6 +53,7 @@ def user_data_cleaner():
     
 #user_data_cleaner()
 
+
 def clean_card_data():
     # Retrieve and clean card payment data from pdf in link
     link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
@@ -58,8 +65,13 @@ def clean_card_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     clean_card_data_upload = connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to local database
 
-clean_card_data()
+#clean_card_data()
 
 
+def list_num_stores():
+    num_stores = extractor.list_number_of_stores(num_stores_endpoint, header_dict)
+    print(num_stores)
+
+list_num_stores()
 
 
