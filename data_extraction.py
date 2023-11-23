@@ -2,10 +2,13 @@
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 from pandasgui import show
+from tqdm import tqdm
 import pandas as pd
 import tabula
 import requests
-from tqdm import tqdm
+import boto3
+import os
+
 
 
 class DataExtractor:
@@ -49,4 +52,16 @@ class DataExtractor:
             store_data_response_list.append(store_data_response.json())
         store_data = pd.DataFrame.from_records(store_data_response_list, index= 'index') 
         return store_data
+    
+
+    def extract_from_s3(self, product_address):
+        # Downloads product details into current working directory (cwd)
+        # Reads product data and returns it as a dataframe
+        product_address = product_address.split('/')
+        cwd = os.getcwd()
+        save_path = "/".join((cwd, product_address[-1]))
+        s3 = boto3.client('s3')
+        s3.download_file(product_address[-2], product_address[-1], save_path)
+        raw_product_details = pd.read_csv(product_address[-1], index_col=0)
+        return raw_product_details
 

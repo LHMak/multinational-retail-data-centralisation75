@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 import numpy as np
 from pandasgui import show
 
@@ -74,6 +75,46 @@ class DataCleaning:
         # Resets index column on dataframe and returns to main.py
         raw_store_data.reset_index(drop = True, inplace=True)
         return raw_store_data
+
+
+    def convert_product_weights(self, raw_product_data):
+        
+        def convert_to_kg(weight_col):
+            unit_match = re.match(r'([\d.]+)\s*([a-zA-Z]+)', weight_col)
+            if unit_match:
+                value, unit = unit_match.groups()
+                value = float(value)
+
+                if unit == 'kg':
+                    return value
+                elif unit == 'g' or unit == 'ml':
+                    return value / 1000
+                elif unit == 'oz':
+                    return value * 0.0283495
+                else:
+                    return None
+            else:
+                return None
+        raw_product_data['weight'] = raw_product_data['weight'].astype('string')
+        raw_product_data['weight_in_kg'] = raw_product_data['weight'].apply(convert_to_kg)
+        show(raw_product_data)
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    def clean_product_data(self, raw_product_data):
+        raw_product_data.info()
+
+        print('\n\n\n---- converting units ---\n\n\n')
+        raw_product_data['weight'] = raw_product_data['weight'].apply(self.convert_product_weights(raw_product_data['weight']))
+        show(raw_product_data)
+            
 
 
 

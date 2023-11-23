@@ -37,7 +37,7 @@ def choose_table():
 
 # Connects to Amazon RDS and retrieves raw user_data,
 # converts it to a dataframe, then returns cleaned user_data
-def user_data_cleaner():
+def upload_user_data():
     # Retrieve and clean user_data from RDS
     rds_creds = connection.read_db_creds(rds_db_creds) # gather database credentials from file
     rds_engine = connection.init_db_engine(rds_creds) # create engine from credentials
@@ -51,10 +51,10 @@ def user_data_cleaner():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     clean_user_data_upload = connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to sales_data database
     
-#user_data_cleaner()
+#upload_user_data()
 
 
-def clean_card_data():
+def uoload_card_data():
     # Retrieve and clean card payment data from pdf in link
     link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
     raw_card_data = extractor.retrieve_pdf_data(link)
@@ -65,7 +65,7 @@ def clean_card_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     clean_card_data_upload = connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to sales_data database
 
-#clean_card_data()
+#upload_card_data()
 
 
 def list_num_stores():
@@ -74,7 +74,7 @@ def list_num_stores():
 
 
 
-def extract_store_data():
+def upload_store_data():
     # Retrieves number of stores from num_stores_endpoint and extracts store data for each store
     retrieve_store_endpoint_base = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
     num_stores = list_num_stores()
@@ -86,5 +86,15 @@ def extract_store_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     clean_store_data_upload = connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details') # upload clean data to sales_data database
 
-extract_store_data()
+#upload_store_data()
 
+
+def upload_product_details():
+    # Retrieves raw_product_details from AWS s3 bucket
+    product_address = 's3://data-handling-public/products.csv'
+    raw_product_details = extractor.extract_from_s3(product_address)
+
+    # Cleans raw_product_details
+    cleaner.convert_product_weights(raw_product_details)
+
+upload_product_details()
