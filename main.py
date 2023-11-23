@@ -15,7 +15,6 @@ rds_db_creds = 'db_creds.yaml'
 sales_data_creds = 'sales_data_creds.yaml'
 # Assigning endpoints and header dictionary to connect to store data API
 num_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
-
 header_dict = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
 
 
@@ -47,10 +46,10 @@ def user_data_cleaner():
     raw_user_data_df = extractor.read_rds_table(rds_engine, user_data) # return dataframe of user data
     clean_user_data_df = cleaner.clean_user_data(raw_user_data_df) # clean user data
 
-    # Upload cleaned user data to local database
+    # Upload cleaned user data to sales_data database
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    clean_user_data_upload = connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to local database
+    clean_user_data_upload = connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to sales_data database
     
 #user_data_cleaner()
 
@@ -61,10 +60,10 @@ def clean_card_data():
     raw_card_data = extractor.retrieve_pdf_data(link)
     clean_card_data = cleaner.clean_card_data(raw_card_data)
 
-    # Upload cleaned user data to local database
+    # Upload cleaned user data to sales_data database
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    clean_card_data_upload = connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to local database
+    clean_card_data_upload = connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to sales_data database
 
 #clean_card_data()
 
@@ -76,14 +75,16 @@ def list_num_stores():
 
 
 def extract_store_data():
+    # Retrieves number of stores from num_stores_endpoint and extracts store data for each store
     retrieve_store_endpoint_base = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
     num_stores = list_num_stores()
-    #store_data = extractor.retrieve_stores_data(retrieve_store_endpoint_base, header_dict, num_stores)
-    # Above line commented out to avoid regenerating the store_data dataframe every time script is run
-    # make sure to un-comment and delete code below
-    store_data = pd.read_csv('store_data_csv.csv', index_col='index')
-    store_data.reset_index(drop=True, inplace=True)
+    store_data = extractor.retrieve_stores_data(retrieve_store_endpoint_base, header_dict, num_stores)
     clean_store_data = cleaner.clean_store_data(store_data)
+
+    # Uploads cleaned store data to sales database
+    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
+    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
+    clean_store_data_upload = connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details') # upload clean data to sales_data database
 
 extract_store_data()
 
