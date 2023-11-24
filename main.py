@@ -120,4 +120,21 @@ def upload_orders_table():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_orders_table, 'orders_table') # upload clean order_table to sales_data database
     
-upload_orders_table()
+#upload_orders_table()
+
+def upload_date_events():
+    # Retrieves raw_product_details from AWS s3 bucket
+    date_events_address = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json'
+    raw_date_events = extractor.extract_from_s3(date_events_address)
+    print('\n\n\n\nextraction complete\n\n\n\n')
+    print(type(raw_date_events))
+
+    # Cleans data_events
+    #clean_date_events = cleaner.clean_date_events(raw_date_events)
+
+    # Uploads cleaned product data to sales database
+    # sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
+    # sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
+    # connection.upload_to_db(sales_db_engine, clean_date_events, 'dim_date_times') # upload clean data to sales_data database
+
+upload_date_events()

@@ -164,3 +164,4 @@ db_creds.yaml
 sales_data_creds.yaml
 store_data_csv.csv
 products.csv
+date_details.json

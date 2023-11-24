@@ -54,14 +54,14 @@ class DataExtractor:
         return store_data
     
 
-    def extract_from_s3(self, product_address):
-        # Downloads product details into current working directory (cwd)
-        # Reads product data and returns it as a dataframe
-        product_address = product_address.split('/')
+    def extract_from_s3(self, s3_address):
+        # Downloads s3 details into current working directory (cwd)
+        # Reads s3 data and returns it as a dataframe
+        s3_address = s3_address.split('/')
         cwd = os.getcwd()
-        save_path = "/".join((cwd, product_address[-1]))
+        save_path = "/".join((cwd, s3_address[-1]))
         s3 = boto3.client('s3')
-        s3.download_file(product_address[-2], product_address[-1], save_path)
-        raw_product_details = pd.read_csv(product_address[-1], index_col=0)
-        return raw_product_details
+        s3.download_file(s3_address[-2], s3_address[-1], save_path)
+        raw_s3_details = pd.read_csv(s3_address[-1], index_col=0)
+        return raw_s3_details
 
