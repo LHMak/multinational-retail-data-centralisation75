@@ -132,15 +132,28 @@ class DataCleaning:
 
     
     def clean_product_data(self, raw_product_data):
-        print('\n\n------ Raw data -------\n\n')
-        raw_product_data.info()
+        # Converts product_name, category, EAN, uuid, removed, product_code to string data type
+        string_cols = list(raw_product_data[['product_name', 'category', 'EAN', 'uuid',
+                             'removed', 'product_code']])
+        raw_product_data[string_cols] = raw_product_data[string_cols].astype('string')
+
+        # Prints unique values in category and removed columns. No erroneous values were returned
+        # so these columns don't seem to need cleaning
+        print(f'\nAvailable categories are:\n{raw_product_data["category"].unique()}\n\nItem availability statuses are:\n{raw_product_data["removed"].unique()}\n\n')
+        
         # Strips product_price column of '£' then converts column into float64. No errors occured,
         # so this column doesn't seem to need cleaning.
-        print('\n\n----- converting price -------')
-        price = raw_product_data['product_price'].str.lstrip('£')
-        price = pd.to_numeric(price)
-        price.info()
-            
+        raw_product_data['product_price'] = raw_product_data['product_price'].str.lstrip('£')
+        raw_product_data['product_price'] = pd.to_numeric(raw_product_data['product_price'])
+        
+        # Converts date_added column to datetime64. Earliest and latests dates seem sensible, so it
+        # looks like the datet formats were interpreted correctly. No errors or Null values so this
+        # column doesn't seem to require cleaning.
+        raw_product_data['date_added'] = pd.to_datetime(raw_product_data['date_added'], format='mixed')
+        
+        # Resets index column on dataframe and returns to main.py
+        raw_product_data.reset_index(drop = True, inplace=True)
+        return raw_product_data
 
 
 

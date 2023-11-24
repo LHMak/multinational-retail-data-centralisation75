@@ -49,7 +49,7 @@ def upload_user_data():
     # Upload cleaned user data to sales_data database
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    clean_user_data_upload = connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to sales_data database
+    connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to sales_data database
     
 #upload_user_data()
 
@@ -63,7 +63,7 @@ def uoload_card_data():
     # Upload cleaned user data to sales_data database
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    clean_card_data_upload = connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to sales_data database
+    connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to sales_data database
 
 #upload_card_data()
 
@@ -84,7 +84,7 @@ def upload_store_data():
     # Uploads cleaned store data to sales database
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    clean_store_data_upload = connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details') # upload clean data to sales_data database
+    connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details') # upload clean data to sales_data database
 
 #upload_store_data()
 
@@ -97,5 +97,10 @@ def upload_product_details():
     # Converts product weights into kg then cleans data
     clean_weight_product_details = cleaner.convert_product_weights(raw_product_details)
     clean_product_details = cleaner.clean_product_data(clean_weight_product_details)
+
+    # Uploads cleaned product data to sales database
+    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
+    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
+    connection.upload_to_db(sales_db_engine, clean_product_details, 'dim_products') # upload clean data to sales_data database
 
 upload_product_details()
