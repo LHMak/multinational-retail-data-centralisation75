@@ -103,4 +103,21 @@ def upload_product_details():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_product_details, 'dim_products') # upload clean data to sales_data database
 
-upload_product_details()
+#upload_product_details()
+
+def upload_orders_table():
+    # Retrieves list of tables stores in AWS RDS, then selects and returns the orders_table.
+    # Raw orders_table is then cleaned and uploaded to sales_data database
+    rds_creds = connection.read_db_creds(rds_db_creds) # gather database credentials from file
+    rds_engine = connection.init_db_engine(rds_creds) # create engine from credentials
+    table_list = connection.list_db_tables(rds_engine)# retrieve list of tables in database
+    order_table = table_list[2] # index list of tables to select orders_table
+    raw_orders_table = extractor.read_rds_table(rds_engine, order_table) # return dataframe of orders_table
+    clean_orders_table = cleaner.clean_orders_data(raw_orders_table) # clean orders_data
+
+    # Uploads cleaned product data to sales database
+    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
+    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
+    connection.upload_to_db(sales_db_engine, clean_orders_table, 'orders_table') # upload clean order_table to sales_data database
+    
+upload_orders_table()

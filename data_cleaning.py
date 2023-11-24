@@ -27,6 +27,9 @@ class DataCleaning:
         null_join_dates = df['join_date'].isnull()
         problem_dates = df[(null_dobs) | (null_join_dates)]
         df = df.drop(problem_dates.index)
+
+        # Resets index column on dataframe and returns to main.py
+        df.reset_index(drop = True, inplace=True)
         return df
     
 
@@ -156,4 +159,12 @@ class DataCleaning:
         return raw_product_data
 
 
-
+    def clean_orders_data(self, raw_orders_table):
+        # Removes level_0 column which was created during retrieval of the data. Also removes
+        # first_name, last_name, 1 columns which were superfluous. Then sets index column to 'index'
+        raw_orders_table = raw_orders_table.drop(['level_0', 'first_name', 'last_name', '1'], axis = 1)
+        raw_orders_table = raw_orders_table.set_index('index', drop=True)
+        
+        # Resets index column on dataframe and returns to main.py
+        raw_orders_table.reset_index(drop = True, inplace=True)
+        return raw_orders_table
