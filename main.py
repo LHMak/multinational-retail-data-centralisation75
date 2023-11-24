@@ -94,7 +94,8 @@ def upload_product_details():
     product_address = 's3://data-handling-public/products.csv'
     raw_product_details = extractor.extract_from_s3(product_address)
 
-    # Cleans raw_product_details
-    cleaner.convert_product_weights(raw_product_details)
+    # Converts product weights into kg then cleans data
+    clean_weight_product_details = cleaner.convert_product_weights(raw_product_details)
+    clean_product_details = cleaner.clean_product_data(clean_weight_product_details)
 
 upload_product_details()

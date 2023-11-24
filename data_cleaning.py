@@ -78,42 +78,68 @@ class DataCleaning:
 
 
     def convert_product_weights(self, raw_product_data):
-        
+        # Defines function to separate quantity and weight from unit then performs
+        # calculations to convert the weight to kg, depending on its unit.
+        # Two main if/else blocks are used to account for some entries including a
+        # quantity value with their weight and unit.
         def convert_to_kg(weight_col):
-            unit_match = re.match(r'([\d.]+)\s*([a-zA-Z]+)', weight_col)
+            # Regex which Looks for a quantity, weight and a unit
+            unit_match = re.match(r'([\d.]+)\s*[xX]\s*([\d.]+)\s*([a-zA-Z]+)', weight_col)
+            # If 3 groups were matched (quantity, weight, unit), multiply qty by weight
+            # then perform unit conversion
             if unit_match:
-                value, unit = unit_match.groups()
-                value = float(value)
-
+                quantity, num, unit = unit_match.groups()
+                quantity, num = float(quantity), float(num)
+            
+                total_value = quantity * num
+            
                 if unit == 'kg':
-                    return value
+                    return total_value
                 elif unit == 'g' or unit == 'ml':
-                    return value / 1000
+                    return total_value / 1000
                 elif unit == 'oz':
-                    return value * 0.0283495
+                    return total_value * 0.0283495
                 else:
                     return None
             else:
-                return None
-        raw_product_data['weight'] = raw_product_data['weight'].astype('string')
-        raw_product_data['weight_in_kg'] = raw_product_data['weight'].apply(convert_to_kg)
-        show(raw_product_data)
+            # If the regex doesn't match 3 groups, match two (weight and unit) then
+            # perform unit conversion. If no match at all, return None
+                unit_match = re.match(r'([\d.]+)\s*([a-zA-Z]+)', weight_col)
+                if unit_match:
+                    num, unit = unit_match.groups()
+                    num = float(num)
 
-    
-    
-    
-    
-    
-    
-    
-    
+                    if unit == 'kg':
+                        return num
+                    elif unit == 'g' or unit == 'ml':
+                        return num / 1000
+                    elif unit == 'oz':
+                        return num * 0.0283495
+                    else:
+                        return None
+                else:
+                    return None
+                
+        # Null values have to be converted to string in order for the convert_to_kg
+        # function to work. After conversion, these string 'NaNs' are converted
+        # back into np.NaN. Afterwards, NaN values are dropped. These rows looked erroneous.
+        raw_product_data['weight'] = raw_product_data['weight'].fillna('NaN')
+        raw_product_data['weight'] = raw_product_data['weight'].apply(convert_to_kg)
+        raw_product_data['weight'] = raw_product_data['weight'].replace('NaN', np.nan)
+        raw_product_data['weight'] = pd.to_numeric(raw_product_data['weight'])
+        raw_product_data = raw_product_data.dropna(how='any')
+        return raw_product_data
+
     
     def clean_product_data(self, raw_product_data):
+        print('\n\n------ Raw data -------\n\n')
         raw_product_data.info()
-
-        print('\n\n\n---- converting units ---\n\n\n')
-        raw_product_data['weight'] = raw_product_data['weight'].apply(self.convert_product_weights(raw_product_data['weight']))
-        show(raw_product_data)
+        # Strips product_price column of '£' then converts column into float64. No errors occured,
+        # so this column doesn't seem to need cleaning.
+        print('\n\n----- converting price -------')
+        price = raw_product_data['product_price'].str.lstrip('£')
+        price = pd.to_numeric(price)
+        price.info()
             
 
 
