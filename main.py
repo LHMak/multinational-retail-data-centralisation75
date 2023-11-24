@@ -124,7 +124,7 @@ def upload_orders_table():
 
 def upload_date_events():
     # Retrieves raw_product_details from AWS s3 bucket
-    date_events_address = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json'
+    date_events_address = 's3://data-handling-public/date_details.json'
     raw_date_events = extractor.extract_from_s3(date_events_address)
     print('\n\n\n\nextraction complete\n\n\n\n')
     print(type(raw_date_events))

@@ -55,13 +55,20 @@ class DataExtractor:
     
 
     def extract_from_s3(self, s3_address):
-        # Downloads s3 details into current working directory (cwd)
-        # Reads s3 data and returns it as a dataframe
+        # Downloads s3 file into current working directory (cwd)
         s3_address = s3_address.split('/')
         cwd = os.getcwd()
         save_path = "/".join((cwd, s3_address[-1]))
+        file_type = s3_address[-1].split('.')[-1]
         s3 = boto3.client('s3')
         s3.download_file(s3_address[-2], s3_address[-1], save_path)
-        raw_s3_details = pd.read_csv(s3_address[-1], index_col=0)
+        # Checks if downloaded file is .csv or .json and returns it as a dataframe.
+        # Dataframe is then returned to main.py 
+        if file_type == 'csv':
+            raw_s3_details = pd.read_csv(s3_address[-1], index_col=0)
+        elif file_type == 'json':
+            raw_s3_details = pd.read_json(s3_address[-1])
+        else:
+            raise TypeError(f'Sorry, {file_type} file types are not accepted by this function.\nThis function only works with .csv and .json file types.')
         return raw_s3_details
 
