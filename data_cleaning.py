@@ -168,3 +168,8 @@ class DataCleaning:
         # Resets index column on dataframe and returns to main.py
         raw_orders_table.reset_index(drop = True, inplace=True)
         return raw_orders_table
+    
+
+    def clean_date_events(self, raw_date_events):
+        raw_date_events.info()
+        show(raw_date_events)

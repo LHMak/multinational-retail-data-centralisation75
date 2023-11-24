@@ -62,6 +62,7 @@ class DataExtractor:
         file_type = s3_address[-1].split('.')[-1]
         s3 = boto3.client('s3')
         s3.download_file(s3_address[-2], s3_address[-1], save_path)
+        
         # Checks if downloaded file is .csv or .json and returns it as a dataframe.
         # Dataframe is then returned to main.py 
         if file_type == 'csv':
