@@ -171,5 +171,39 @@ class DataCleaning:
     
 
     def clean_date_events(self, raw_date_events):
-        raw_date_events.info()
-        show(raw_date_events)
+
+        # Converts timestamps column to datetime64, coerces errors to convert them into Null values.
+        # Time component is then extracted, otherwise timestamp would include the date of the Unix Epoch. 
+        # The rows with Null timestamps were visually checked and confirmed to be erroneous.
+        # Function then drops these erroneous rows.
+        raw_date_events['timestamp'] = pd.to_datetime(raw_date_events['timestamp'], format='%H:%M:%S', errors='coerce').dt.time
+        null_timestamps_mask = raw_date_events['timestamp'].isnull()
+        null_timestamps = raw_date_events[null_timestamps_mask]
+        raw_date_events = raw_date_events.drop(null_timestamps.index)
+
+        # Converts month column to datetime64, then extracts the month component.
+        # Otherwise, Unix epoch year, day and time would be included.
+        # No erroneous month values were identified from a visual check.
+        raw_date_events['month'] = pd.to_datetime(raw_date_events['month'], format='%m').dt.month
+     
+        # Converts year column to datetime64, then extracts the year component.
+        # Otherwise, Unix epoch month, day and time would be included.
+        # No erroneous month values were identified from a visual check.
+        raw_date_events['year'] = pd.to_datetime(raw_date_events['year'], format='%Y').dt.year
+
+        # Converts month column to datetime64, then extracts the month component.
+        # Otherwise, Unix epoch year, day and time would be included.
+        # No erroneous month values were identified from a visual check.
+        raw_date_events['day'] = pd.to_datetime(raw_date_events['day'], format='%d').dt.day
+
+        # Returns unique values in time_period column. When printeed, no erroneous
+        # values were detected, so no further cleaning required.
+        raw_date_events['time_period'].unique()
+
+        # Resets index column on dataframe and returns to main.py        
+        raw_date_events.reset_index(drop = True, inplace=True)
+        return raw_date_events
+
+
+        
+        
