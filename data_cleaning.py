@@ -1,12 +1,11 @@
 import pandas as pd
 import re
 import numpy as np
-from pandasgui import show
+
 
 class DataCleaning:
 
     def clean_user_data (self, df):
-
         # Sets index to column 1 and sort by ascending
         df.set_index(df.columns[0], inplace = True)
         df.sort_values(by=['index'], inplace = True)
@@ -58,7 +57,6 @@ class DataCleaning:
     
 
     def clean_store_data(self, raw_store_data):
-
         # Removes 'lat' column as it looks erroneous
         raw_store_data = raw_store_data.drop(['lat'], axis=1)
 
@@ -133,11 +131,10 @@ class DataCleaning:
         raw_product_data = raw_product_data.dropna(how='any')
         return raw_product_data
 
-    
+
     def clean_product_data(self, raw_product_data):
         # Converts product_name, category, EAN, uuid, removed, product_code to string data type
-        string_cols = list(raw_product_data[['product_name', 'category', 'EAN', 'uuid',
-                             'removed', 'product_code']])
+        string_cols = list(raw_product_data[['product_name', 'category', 'EAN', 'uuid', 'removed', 'product_code']])
         raw_product_data[string_cols] = raw_product_data[string_cols].astype('string')
 
         # Prints unique values in category and removed columns. No erroneous values were returned
@@ -171,7 +168,6 @@ class DataCleaning:
     
 
     def clean_date_events(self, raw_date_events):
-
         # Converts timestamps column to datetime64, coerces errors to convert them into Null values.
         # Time component is then extracted, otherwise timestamp would include the date of the Unix Epoch. 
         # The rows with Null timestamps were visually checked and confirmed to be erroneous.

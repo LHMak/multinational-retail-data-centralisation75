@@ -1,8 +1,5 @@
-# Defining data extractor class
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
-from pandasgui import show
-from tqdm import tqdm
 import pandas as pd
 import tabula
 import requests
@@ -46,7 +43,7 @@ class DataExtractor:
         # to send a get requesst to the API for each store.
         # Concats all responses into one dataframe and returns it to main.py 
         store_data_response_list= []
-        for store in tqdm(range(num_stores)):
+        for store in range(num_stores):
             retrieve_store_endpoint = retrieve_store_endpoint_base + str(store)
             store_data_response = requests.get(retrieve_store_endpoint, headers=header_dict)
             store_data_response_list.append(store_data_response.json())

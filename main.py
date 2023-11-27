@@ -1,8 +1,7 @@
 from database_utils import DatabaseConnector
 from data_extraction import DataExtractor
 from data_cleaning import DataCleaning
-import pandas as pd
-from pandasgui import show
+
 
 # instantialising DatabaseConnector
 connection = DatabaseConnector()
@@ -16,23 +15,6 @@ sales_data_creds = 'sales_data_creds.yaml'
 # Assigning endpoints and header dictionary to connect to store data API
 num_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
 header_dict = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
-
-
-# This method displays a list of all tables in Amazon RDS
-# and prompts the user to choose one, returning
-# a Pandas dataframe of the table
-def choose_table():
-    # gather database credentials from file
-    rds_creds = connection.read_db_creds(rds_db_creds)
-    # create engine from credentials
-    engine = connection.init_db_engine(rds_creds)
-    # list tables from connected database
-    table_list = connection.list_db_tables(engine)
-    chosen_table = input(f"Select a table to view from:\n{table_list}: ")
-    # return dataframe of chosen data contents
-    table_read = extractor.read_rds_table(engine, chosen_table)
-
-#choose_table()
 
 
 # Connects to Amazon RDS and retrieves raw user_data,
@@ -51,10 +33,8 @@ def upload_user_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to sales_data database
     
-#upload_user_data()
 
-
-def uoload_card_data():
+def upload_card_data():
     # Retrieve and clean card payment data from pdf in link
     link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
     raw_card_data = extractor.retrieve_pdf_data(link)
@@ -65,13 +45,10 @@ def uoload_card_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to sales_data database
 
-#upload_card_data()
-
 
 def list_num_stores():
     num_stores = extractor.list_number_of_stores(num_stores_endpoint, header_dict)
     return num_stores
-
 
 
 def upload_store_data():
@@ -85,8 +62,6 @@ def upload_store_data():
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details') # upload clean data to sales_data database
-
-#upload_store_data()
 
 
 def upload_product_details():
@@ -103,7 +78,6 @@ def upload_product_details():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_product_details, 'dim_products') # upload clean data to sales_data database
 
-#upload_product_details()
 
 def upload_orders_table():
     # Retrieves list of tables stores in AWS RDS, then selects and returns the orders_table.
@@ -119,8 +93,7 @@ def upload_orders_table():
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_orders_table, 'orders_table') # upload clean order_table to sales_data database
-    
-#upload_orders_table()
+
 
 def upload_date_events():
     # Retrieves date events json file from AWS s3 bucket
@@ -134,4 +107,21 @@ def upload_date_events():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_date_events, 'dim_date_times') # upload clean data to sales_data database
 
+upload_user_data()
+print("User data has now been cleaned and uploaded to the PostgreSQL database.")
+
+upload_card_data()
+print("Card data has now been cleaned and uploaded to the PostgreSQL database.")
+
+upload_store_data()
+print("Store data has now been cleaned and uploaded to the PostgreSQL database.")
+
+upload_product_details()
+print("Product details have now been cleaned and uploaded to the PostgreSQL database.")  
+
+upload_orders_table()
+print("Order data has now been cleaned and uploaded to the PostgreSQL database.")
+
 upload_date_events()
+print("Date event date has now been cleaned and uploaded to the PostgreSQL database.")
+print("All data has now been cleaned and uploaded to the PostgreSQL database!")
