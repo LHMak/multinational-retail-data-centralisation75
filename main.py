@@ -16,10 +16,16 @@ sales_data_creds = 'sales_data_creds.yaml'
 num_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
 header_dict = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
 
-
 # Connects to Amazon RDS and retrieves raw user_data,
 # converts it to a dataframe, then returns cleaned user_data
 def upload_user_data():
+    '''
+    This function
+
+    Args:
+        
+    Returns:
+    '''
     # Retrieve and clean user_data from RDS
     rds_creds = connection.read_db_creds(rds_db_creds) # gather database credentials from file
     rds_engine = connection.init_db_engine(rds_creds) # create engine from credentials
@@ -33,8 +39,14 @@ def upload_user_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_user_data_df, 'dim_users') # upload clean data to sales_data database
     
-
 def upload_card_data():
+    '''
+    This function
+
+    Args:
+        
+    Returns:
+    '''
     # Retrieve and clean card payment data from pdf in link
     link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
     raw_card_data = extractor.retrieve_pdf_data(link)
@@ -45,13 +57,25 @@ def upload_card_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to sales_data database
 
-
 def list_num_stores():
+    '''
+    This function
+
+    Args:
+        
+    Returns:
+    '''
     num_stores = extractor.list_number_of_stores(num_stores_endpoint, header_dict)
     return num_stores
 
-
 def upload_store_data():
+    '''
+    This function
+
+    Args:
+        
+    Returns:
+    '''
     # Retrieves number of stores from num_stores_endpoint and extracts store data for each store
     retrieve_store_endpoint_base = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
     num_stores = list_num_stores()
@@ -63,8 +87,14 @@ def upload_store_data():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details') # upload clean data to sales_data database
 
-
 def upload_product_details():
+    '''
+    This function
+
+    Args:
+        
+    Returns:
+    '''
     # Retrieves raw_product_details from AWS s3 bucket
     product_address = 's3://data-handling-public/products.csv'
     raw_product_details = extractor.extract_from_s3(product_address)
@@ -78,8 +108,14 @@ def upload_product_details():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_product_details, 'dim_products') # upload clean data to sales_data database
 
-
 def upload_orders_table():
+    '''
+    This function
+
+    Args:
+        
+    Returns:
+    '''
     # Retrieves list of tables stores in AWS RDS, then selects and returns the orders_table.
     # Raw orders_table is then cleaned and uploaded to sales_data database
     rds_creds = connection.read_db_creds(rds_db_creds) # gather database credentials from file
@@ -94,8 +130,14 @@ def upload_orders_table():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_orders_table, 'orders_table') # upload clean order_table to sales_data database
 
-
 def upload_date_events():
+    '''
+    This function
+
+    Args:
+        
+    Returns:
+    '''
     # Retrieves date events json file from AWS s3 bucket
     # Raw date events file is then cleaned and uploaded to sales_data database
     date_events_address = 's3://data-handling-public/date_details.json'

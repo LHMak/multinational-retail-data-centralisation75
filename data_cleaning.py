@@ -4,35 +4,53 @@ import numpy as np
 
 
 class DataCleaning:
+    '''
+    This class.
 
-    def clean_user_data (self, df):
+    Functions:
+        x:
+    '''
+    def clean_user_data (self, raw_user_data):
+        '''
+        This function
+
+        Args:
+        
+        Returns:
+        '''
         # Sets index to column 1 and sort by ascending
-        df.set_index(df.columns[0], inplace = True)
-        df.sort_values(by=['index'], inplace = True)
+        raw_user_data.set_index(raw_user_data.columns[0], inplace = True)
+        raw_user_data.sort_values(by=['index'], inplace = True)
 
         # Casting string columns
-        df['address'] = df['address'].str.replace('\n', ', ')
-        df_string_cols = list(df[['first_name', 'last_name', 'company', 'email_address',
+        raw_user_data['address'] = raw_user_data['address'].str.replace('\n', ', ')
+        string_cols = list(raw_user_data[['first_name', 'last_name', 'company', 'email_address',
                              'country', 'country_code', 'user_uuid', 'address', 'phone_number']])
-        df[df_string_cols] = df[df_string_cols].astype('string')
+        raw_user_data[string_cols] = raw_user_data[string_cols].astype('string')
 
         # Casting date columns
         # using pd.to_datetime to convert date formats, errors return NaT
-        df['date_of_birth'] = pd.to_datetime(df['date_of_birth'], infer_datetime_format=True, errors='coerce')
-        df['join_date'] = pd.to_datetime(df['join_date'], infer_datetime_format=True, errors='coerce')
+        raw_user_data['date_of_birth'] = pd.to_datetime(raw_user_data['date_of_birth'], infer_datetime_format=True, errors='coerce')
+        raw_user_data['join_date'] = pd.to_datetime(raw_user_data['join_date'], infer_datetime_format=True, errors='coerce')
         
         # removing rows where date_of_birth or join_date are null
-        null_dobs = df['date_of_birth'].isnull()
-        null_join_dates = df['join_date'].isnull()
-        problem_dates = df[(null_dobs) | (null_join_dates)]
-        df = df.drop(problem_dates.index)
+        null_dobs = raw_user_data['date_of_birth'].isnull()
+        null_join_dates = raw_user_data['join_date'].isnull()
+        problem_dates = raw_user_data[(null_dobs) | (null_join_dates)]
+        raw_user_data = raw_user_data.drop(problem_dates.index)
 
         # Resets index column on dataframe and returns to main.py
-        df.reset_index(drop = True, inplace=True)
-        return df
+        raw_user_data.reset_index(drop = True, inplace=True)
+        return raw_user_data
     
-
     def clean_card_data(self, raw_card_data):
+        '''
+        This function
+
+        Args:
+        
+        Returns:
+        '''
         # Cleans card_number column by casting as string and removing non numeric characters,
         # then converts to numeric data and finally drops null values
         raw_card_data['card_number'] = raw_card_data['card_number'].astype('string').str.replace(r'[^0-9]+', '', regex=True)
@@ -55,8 +73,14 @@ class DataCleaning:
         raw_card_data.reset_index(drop = True, inplace=True)
         return raw_card_data
     
-
     def clean_store_data(self, raw_store_data):
+        '''
+        This function
+
+        Args:
+        
+        Returns:
+        '''
         # Removes 'lat' column as it looks erroneous
         raw_store_data = raw_store_data.drop(['lat'], axis=1)
 
@@ -77,13 +101,26 @@ class DataCleaning:
         raw_store_data.reset_index(drop = True, inplace=True)
         return raw_store_data
 
-
     def convert_product_weights(self, raw_product_data):
+        '''
+        This function
+
+        Args:
+        
+        Returns:
+        '''
         # Defines function to separate quantity and weight from unit then performs
         # calculations to convert the weight to kg, depending on its unit.
         # Two main if/else blocks are used to account for some entries including a
         # quantity value with their weight and unit.
         def convert_to_kg(weight_col):
+            '''
+            This function
+
+            Args:
+        
+            Returns:
+            '''
             # Regex which Looks for a quantity, weight and a unit
             unit_match = re.match(r'([\d.]+)\s*[xX]\s*([\d.]+)\s*([a-zA-Z]+)', weight_col)
             # If 3 groups were matched (quantity, weight, unit), multiply qty by weight
@@ -131,8 +168,14 @@ class DataCleaning:
         raw_product_data = raw_product_data.dropna(how='any')
         return raw_product_data
 
-
     def clean_product_data(self, raw_product_data):
+        '''
+        This function
+
+        Args:
+        
+        Returns:
+        '''
         # Converts product_name, category, EAN, uuid, removed, product_code to string data type
         string_cols = list(raw_product_data[['product_name', 'category', 'EAN', 'uuid', 'removed', 'product_code']])
         raw_product_data[string_cols] = raw_product_data[string_cols].astype('string')
@@ -157,6 +200,13 @@ class DataCleaning:
 
 
     def clean_orders_data(self, raw_orders_table):
+        '''
+        This function
+
+        Args:
+        
+        Returns:
+        '''
         # Removes level_0 column which was created during retrieval of the data. Also removes
         # first_name, last_name, 1 columns which were superfluous. Then sets index column to 'index'
         raw_orders_table = raw_orders_table.drop(['level_0', 'first_name', 'last_name', '1'], axis = 1)
@@ -168,6 +218,13 @@ class DataCleaning:
     
 
     def clean_date_events(self, raw_date_events):
+        '''
+        This function
+
+        Args:
+        
+        Returns:
+        '''
         # Converts timestamps column to datetime64, coerces errors to convert them into Null values.
         # Time component is then extracted, otherwise timestamp would include the date of the Unix Epoch. 
         # The rows with Null timestamps were visually checked and confirmed to be erroneous.
@@ -199,7 +256,3 @@ class DataCleaning:
         # Resets index column on dataframe and returns to main.py        
         raw_date_events.reset_index(drop = True, inplace=True)
         return raw_date_events
-
-
-        
-        
