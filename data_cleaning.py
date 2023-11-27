@@ -132,11 +132,23 @@ class DataCleaning:
         # quantity value with their weight and unit.
         def convert_to_kg(weight_col):
             '''
-            This function
+            This function uses a regex expression to convert the weight of the product to kg.
+
+            The regex expression searches for 3 groups: a quantity, a value and a unit (kg, g, ml, oz).
+            An if/else block is used to convert the value (depending on its unit), then
+            multiplied by the quantity to get the weight of the product in kg.
+
+            If a quantity value is not found, then the nested if/else block is used. This
+            block converts the value depending on the unit. The else clause catches any
+            weight entries which do not match the regex expression, such as random text
+            or a 'NaN' string that replaced any null values from the
+            convert_product_weights function.
 
             Args:
+                weight_col: the 'weight' column of the productt data dataframe.
         
             Returns:
+                total_value: the weight value once it has been converted into kg.
             '''
             # Regex which Looks for a quantity, weight and a unit
             unit_match = re.match(r'([\d.]+)\s*[xX]\s*([\d.]+)\s*([a-zA-Z]+)', weight_col)
@@ -161,20 +173,19 @@ class DataCleaning:
             # perform unit conversion. If no match at all, return None
                 unit_match = re.match(r'([\d.]+)\s*([a-zA-Z]+)', weight_col)
                 if unit_match:
-                    num, unit = unit_match.groups()
-                    num = float(num)
+                    total_value, unit = unit_match.groups()
+                    total_value = float(num)
 
                     if unit == 'kg':
-                        return num
+                        return total_value
                     elif unit == 'g' or unit == 'ml':
-                        return num / 1000
+                        return total_value / 1000
                     elif unit == 'oz':
-                        return num * 0.0283495
+                        return total_value * 0.0283495
                     else:
                         return None
                 else:
                     return None
-                
         # Null values have to be converted to string in order for the convert_to_kg
         # function to work. After conversion, these string 'NaNs' are converted
         # back into np.NaN. Afterwards, NaN values are dropped. These rows looked erroneous.
