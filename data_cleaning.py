@@ -117,8 +117,10 @@ class DataCleaning:
 
         A nested function, convert_to_kg, is defined. This function converts the weights of each product into kg.
 
-        Empty rows are filled with a 'NaN' string, then the nested convert_to_kg function is applied to each product weight.
-        This nested function uses a regex expression to match only a value and a weight unit (e.g. kg, oz, ml). Any erroneous text
+        The nested convert_to_kg function is applied to all rows in the 'weight' column of the product data.
+        After this, any null values are dropped. The product data dataframe is then passed to the clean_product_data function.
+        For convert_to_kg to work, any null values are converted to a string that won't be read as a weight unit, 'NaN.
+        Once convert_to_kg is applied, these NaN strings are replaced with np.NaN and then dropped.
 
         Args:
             raw product_data: a pandas dataframe containing the raw store data to be cleaned.
@@ -157,9 +159,7 @@ class DataCleaning:
             if unit_match:
                 quantity, num, unit = unit_match.groups()
                 quantity, num = float(quantity), float(num)
-            
                 total_value = quantity * num
-            
                 if unit == 'kg':
                     return total_value
                 elif unit == 'g' or unit == 'ml':
@@ -198,11 +198,22 @@ class DataCleaning:
 
     def clean_product_data(self, raw_product_data):
         '''
-        This function
+        This function is responsible for cleaning the raw product data.
+
+        Columns of string data are cast into a string datatype, then the unique product categories
+        are found to identify any typos or erroneous category data. No errors were found, indicating
+        this part of the dataframe is fine.
+
+        The price column is then stripped of '£' symbols and converted to a numerical datatype, then dates
+        are converted to datetime64. No erroneous data was identified, so the index gets reset and the cleaned
+        data returned to main.py for upload to the PostgreSQL database.
 
         Args:
-        
+            raw_product_data: pandas dataframe of the product data after the weight column has been cleaned
+                              by convert_product_weights.
         Returns:
+            raw_product_data: pandas dataframe of the product data wihch has now been cleaned. Will be reassigned
+                              as clean_product_data in main.py
         '''
         # Converts product_name, category, EAN, uuid, removed, product_code to string data type
         string_cols = list(raw_product_data[['product_name', 'category', 'EAN', 'uuid', 'removed', 'product_code']])
@@ -226,14 +237,19 @@ class DataCleaning:
         raw_product_data.reset_index(drop = True, inplace=True)
         return raw_product_data
 
-
     def clean_orders_data(self, raw_orders_table):
         '''
-        This function
+        This function cleans the orders table data before it is uploaded to the PostgreSQL database.
+
+        First, 'level_0', 'first_name' and 'last_name' columns are dropped as they seem superfluous.
+        No erroneous data was identified, so the index column is reset and the cleaned data is returned
+        to main.py.
 
         Args:
-        
+            raw_orders_table: pandas dataframe of orders table data to be cleaned.
         Returns:
+            raw_orders_table: pandas dataframe of orders table data which has now been cleaned.
+                              It will be reassigned to clean_orders_table in main.py
         '''
         # Removes level_0 column which was created during retrieval of the data. Also removes
         # first_name, last_name, 1 columns which were superfluous. Then sets index column to 'index'
@@ -247,8 +263,19 @@ class DataCleaning:
 
     def clean_date_events(self, raw_date_events):
         '''
-        This function
+        This function cleans the data events data before it is uploaded to the PostgreSQL database.
 
+        This is done by casting the 'timestamp' column to datetime64 using a H:M:S. Errors
+        are coerced to identify any erroneous data. The .dt.time function is used to prevent a date
+        being added onto the timestamps. As a side effect, this means the datatype of the column reverts
+        to 'object.'
+
+        The erroneous data is dropped from the table.
+
+        The same methodology is applied to the 'month,' 'year,' and 'day' columns.
+
+        Unique time periods are printed to identify typos and erroneous data. Nothing unusual was found.
+        
         Args:
         
         Returns:
@@ -277,7 +304,7 @@ class DataCleaning:
         # No erroneous month values were identified from a visual check.
         raw_date_events['day'] = pd.to_datetime(raw_date_events['day'], format='%d').dt.day
 
-        # Returns unique values in time_period column. When printeed, no erroneous
+        # Returns unique values in time_period column. When printed, no erroneous
         # values were detected, so no further cleaning required.
         raw_date_events['time_period'].unique()
 
