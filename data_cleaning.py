@@ -128,10 +128,6 @@ class DataCleaning:
         Returns:
             raw product_data: a pandas dataframe which as now been cleaned. Will be reassigned as clean_product_data in main.py
         '''
-        # Defines function to separate quantity and weight from unit then performs
-        # calculations to convert the weight to kg, depending on its unit.
-        # Two main if/else blocks are used to account for some entries including a
-        # quantity value with their weight and unit.
         def convert_to_kg(weight_col):
             '''
             This function uses a regex expression to convert the weight of the product to kg.
@@ -215,25 +211,17 @@ class DataCleaning:
             raw_product_data: pandas dataframe of the product data wihch has now been cleaned. Will be reassigned
                               as clean_product_data in main.py
         '''
-        # Converts product_name, category, EAN, uuid, removed, product_code to string data type
         string_cols = list(raw_product_data[['product_name', 'category', 'EAN', 'uuid', 'removed', 'product_code']])
         raw_product_data[string_cols] = raw_product_data[string_cols].astype('string')
-
-        # Prints unique values in category and removed columns. No erroneous values were returned
-        # so these columns don't seem to need cleaning
         print(f'\nAvailable categories are:\n{raw_product_data["category"].unique()}\n\nItem availability statuses are:\n{raw_product_data["removed"].unique()}\n\n')
         
-        # Strips product_price column of '£' then converts column into float64. No errors occured,
-        # so this column doesn't seem to need cleaning.
         raw_product_data['product_price'] = raw_product_data['product_price'].str.lstrip('£')
         raw_product_data['product_price'] = pd.to_numeric(raw_product_data['product_price'])
-        
         # Converts date_added column to datetime64. Earliest and latests dates seem sensible, so it
-        # looks like the datet formats were interpreted correctly. No errors or Null values so this
+        # looks like the date formats were interpreted correctly. No errors or Null values so this
         # column doesn't seem to require cleaning.
         raw_product_data['date_added'] = pd.to_datetime(raw_product_data['date_added'], format='mixed')
-        
-        # Resets index column on dataframe and returns to main.py
+
         raw_product_data.reset_index(drop = True, inplace=True)
         return raw_product_data
 
@@ -251,63 +239,41 @@ class DataCleaning:
             raw_orders_table: pandas dataframe of orders table data which has now been cleaned.
                               It will be reassigned to clean_orders_table in main.py
         '''
-        # Removes level_0 column which was created during retrieval of the data. Also removes
-        # first_name, last_name, 1 columns which were superfluous. Then sets index column to 'index'
         raw_orders_table = raw_orders_table.drop(['level_0', 'first_name', 'last_name', '1'], axis = 1)
         raw_orders_table = raw_orders_table.set_index('index', drop=True)
-        
-        # Resets index column on dataframe and returns to main.py
         raw_orders_table.reset_index(drop = True, inplace=True)
         return raw_orders_table
-    
 
     def clean_date_events(self, raw_date_events):
         '''
         This function cleans the data events data before it is uploaded to the PostgreSQL database.
 
         This is done by casting the 'timestamp' column to datetime64 using a H:M:S. Errors
-        are coerced to identify any erroneous data. The .dt.time function is used to prevent a date
-        being added onto the timestamps. As a side effect, this means the datatype of the column reverts
-        to 'object.'
+        are coerced to identify any erroneous data. The .dt.time function is used to extract the timestamp
+        and remove the Unix Epoch date which would otherwise be added into the column. As a side effect of
+        using .dt.time, the datatype of the 'timestamp' column reverts to object.
 
-        The erroneous data is dropped from the table.
-
-        The same methodology is applied to the 'month,' 'year,' and 'day' columns.
+        The erroneous data is dropped from the table (after being visually checked). The same methodology is applied to the 'month,'
+        'year,' and 'day' columns.
 
         Unique time periods are printed to identify typos and erroneous data. Nothing unusual was found.
         
         Args:
+            raw_date_events: pandas dataframe of date events to be cleaned.
         
         Returns:
+            raw_date_events: pandas dataframe of date events which has been cleaned. Will be
+                             reassigned to clean_date_events in main.py
         '''
-        # Converts timestamps column to datetime64, coerces errors to convert them into Null values.
-        # Time component is then extracted, otherwise timestamp would include the date of the Unix Epoch. 
-        # The rows with Null timestamps were visually checked and confirmed to be erroneous.
-        # Function then drops these erroneous rows.
         raw_date_events['timestamp'] = pd.to_datetime(raw_date_events['timestamp'], format='%H:%M:%S', errors='coerce').dt.time
         null_timestamps_mask = raw_date_events['timestamp'].isnull()
         null_timestamps = raw_date_events[null_timestamps_mask]
         raw_date_events = raw_date_events.drop(null_timestamps.index)
 
-        # Converts month column to datetime64, then extracts the month component.
-        # Otherwise, Unix epoch year, day and time would be included.
-        # No erroneous month values were identified from a visual check.
         raw_date_events['month'] = pd.to_datetime(raw_date_events['month'], format='%m').dt.month
-     
-        # Converts year column to datetime64, then extracts the year component.
-        # Otherwise, Unix epoch month, day and time would be included.
-        # No erroneous month values were identified from a visual check.
         raw_date_events['year'] = pd.to_datetime(raw_date_events['year'], format='%Y').dt.year
-
-        # Converts month column to datetime64, then extracts the month component.
-        # Otherwise, Unix epoch year, day and time would be included.
-        # No erroneous month values were identified from a visual check.
         raw_date_events['day'] = pd.to_datetime(raw_date_events['day'], format='%d').dt.day
-
-        # Returns unique values in time_period column. When printed, no erroneous
-        # values were detected, so no further cleaning required.
         raw_date_events['time_period'].unique()
-
-        # Resets index column on dataframe and returns to main.py        
+       
         raw_date_events.reset_index(drop = True, inplace=True)
         return raw_date_events
