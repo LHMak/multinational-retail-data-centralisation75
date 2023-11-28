@@ -170,7 +170,7 @@ class DataCleaning:
                 unit_match = re.match(r'([\d.]+)\s*([a-zA-Z]+)', weight_col)
                 if unit_match:
                     total_value, unit = unit_match.groups()
-                    total_value = float(num)
+                    total_value = float(total_value)
 
                     if unit == 'kg':
                         return total_value
