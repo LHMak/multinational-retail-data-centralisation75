@@ -139,21 +139,21 @@ def upload_date_events():
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_date_events, 'dim_date_times') # upload clean data to sales_data database
 
-upload_user_data()
-print("User data has now been cleaned and uploaded to the PostgreSQL database.")
+# upload_user_data()
+# print("User data has now been cleaned and uploaded to the PostgreSQL database.")
 
 upload_card_data()
 print("Card data has now been cleaned and uploaded to the PostgreSQL database.")
 
-upload_store_data()
-print("Store data has now been cleaned and uploaded to the PostgreSQL database.")
+# upload_store_data()
+# print("Store data has now been cleaned and uploaded to the PostgreSQL database.")
 
-upload_product_details()
-print("Product details have now been cleaned and uploaded to the PostgreSQL database.")  
+# upload_product_details()
+# print("Product details have now been cleaned and uploaded to the PostgreSQL database.")  
 
-upload_orders_table()
-print("Order data has now been cleaned and uploaded to the PostgreSQL database.")
+# upload_orders_table()
+# print("Order data has now been cleaned and uploaded to the PostgreSQL database.")
 
-upload_date_events()
-print("Date event date has now been cleaned and uploaded to the PostgreSQL database.")
-print("All data has now been cleaned and uploaded to the PostgreSQL database!")
+# upload_date_events()
+# print("Date event date has now been cleaned and uploaded to the PostgreSQL database.")
+# print("All data has now been cleaned and uploaded to the PostgreSQL database!")
