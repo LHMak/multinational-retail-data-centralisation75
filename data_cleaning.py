@@ -39,8 +39,8 @@ class DataCleaning:
         raw_user_data[string_cols] = raw_user_data[string_cols].astype('string')
         # Casting date columns
         # using pd.to_datetime to convert date formats, errors return NaT
-        raw_user_data['date_of_birth'] = pd.to_datetime(raw_user_data['date_of_birth'], infer_datetime_format=True, errors='coerce')
-        raw_user_data['join_date'] = pd.to_datetime(raw_user_data['join_date'], infer_datetime_format=True, errors='coerce')
+        raw_user_data['date_of_birth'] = pd.to_datetime(raw_user_data['date_of_birth'], format='mixed', infer_datetime_format=True, errors='coerce')
+        raw_user_data['join_date'] = pd.to_datetime(raw_user_data['join_date'], format='mixed', infer_datetime_format=True, errors='coerce')
         # removing rows where date_of_birth or join_date are null
         null_dobs = raw_user_data['date_of_birth'].isnull()
         null_join_dates = raw_user_data['join_date'].isnull()
