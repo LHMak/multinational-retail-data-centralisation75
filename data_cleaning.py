@@ -62,32 +62,18 @@ class DataCleaning:
         Returns:
             raw_card_data: a pandas dataframe which as now been cleaned. Will be reassigned as clean_card_data in main.py
         '''
-        # Cleans card_number column by casting as string and removing non numeric characters,
-        # then converts to numeric data and finally drops null values
+        # Cleans card_number column by casting as string and uses regex to match rows
+        # with only numeric characters.
         raw_card_data['card_number'] = raw_card_data['card_number'].astype('string').str.replace(r'[^0-9]+', '', regex=True)
-        raw_card_data['card_number'] = pd.to_numeric(raw_card_data['card_number'])
-        null_card_no = raw_card_data.loc[raw_card_data['card_number'].isnull()]
-        raw_card_data = raw_card_data.drop(null_card_no.index)
-        raw_card_data['card_number'] = raw_card_data['card_number'].astype('int64')
-        # Casts date_payment_confirmed as datetime64, then removing time component
-        print('\n\nbefore pay_date convert: \n\n', raw_card_data.loc[raw_card_data['card_number'] == 3529023891650490])
-
-        #raw_card_data['date_payment_confirmed'] = pd.to_datetime(raw_card_data['date_payment_confirmed'], format='%Y-%m-%d', errors='coerce')
-        raw_card_data['date_payment_confirmed'].apply(pd.to_datetime,
-                                                            errors='coerce')
-        null_pay_date = raw_card_data.loc[raw_card_data['date_payment_confirmed'].isnull()]
-        print('\n\nIs this in null pay_date?\n\n',null_pay_date.loc[raw_card_data['card_number'] == 3529023891650490])
-        raw_card_data = raw_card_data.drop(null_pay_date.index)
-        #raw_card_data['date_payment_confirmed'] = raw_card_data['date_payment_confirmed'].dt.date
-
-        print('after pay_date convert and drop: \n\n', raw_card_data.loc[raw_card_data['card_number'] == 3529023891650490])
-        # Casts exp_date as datetime64, drops null values then formats as mm/yy
-        raw_card_data['expiry_date'] = raw_card_data['expiry_date'].astype('string')
-        # raw_card_data['expiry_date'] = pd.to_datetime(raw_card_data['expiry_date'], format='%m/%y', errors='coerce')
-        # raw_card_data['expiry_date'] = raw_card_data['expiry_date'].dt.strftime('%m/%y')
+        # Removes null data by getting unique values in card_provider column.
+        # Any rows with card_provider values not matching the list below are dropped.
+        valid_card_providers = ['Diners Club / Carte Blanche', 'American Express',
+                                'JCB 16 digit', 'JCB 15 digit', 'Maestro',
+                                'Mastercard', 'Discover', 'VISA 19 digit',
+                                'VISA 16 digit', 'VISA 13 digit']
+        raw_card_data = raw_card_data[(raw_card_data['card_provider'].isin(valid_card_providers))]
         # Resets index column on dataframe and returns to main.py
         raw_card_data.reset_index(drop = True, inplace=True)
-        print('\n\nStill there at end??\n\n',raw_card_data.loc[raw_card_data['card_number'] == 3529023891650490])
         return raw_card_data
     
     def clean_store_data(self, raw_store_data):
