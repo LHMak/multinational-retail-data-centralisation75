@@ -21,7 +21,11 @@ class DataCleaning:
         '''
         This function takes in raw user data and cleans it.
 
-        Columns are converted to their intended data types and null values are identified and removed.
+        Newline character in address column is replace with a comma to make the entries more
+        readable the all the columns with string data are converted to the string datatype.
+
+        The data_of_birth and join_date columns are then converted to datetime64. Finally,
+        null values in these columns are dropped from the table.
 
         Args:
             raw_user_data: a pandas dataframe containing the raw user data to be cleaned.
@@ -54,7 +58,13 @@ class DataCleaning:
         '''
         This function takes in raw card data and cleans it.
 
-        Columns are converted to their intended data types and null values are identified and removed.
+        The card_number column is cast to the string datatype then a regex is applied
+        to match only numeric characters. Any unmatched characters such as letters or symbols
+        are removed.
+        
+        After this, the values in the card_provider column are checked and any rows with invalid
+        entries (e.g. null or random text strings) are dropped. Finally the index column is reset
+        and the card_data dataframe is returned to main.py 
 
         Args:
             raw_card_data: a pandas dataframe containing the raw card data to be cleaned.
