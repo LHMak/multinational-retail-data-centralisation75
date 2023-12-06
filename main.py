@@ -15,8 +15,7 @@ num_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/pr
 retrieve_store_endpoint_base = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
 api_key_header = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
 
-# Connects to Amazon RDS and retrieves raw user_data,
-# converts it to a dataframe, then returns cleaned user_data
+
 def upload_user_data():
     '''
     This function cleans and uploads user_data to the new PostgreSQL database.
@@ -26,17 +25,18 @@ def upload_user_data():
     function connects to the new PostgreSQL database, then cleaned user data is uploaded
     to the PostgreSQL database under the name 'dim_users.'
     '''
-    # Retrieve and clean user_data from RDS
-    rds_creds = connection.read_db_creds(rds_db_creds) # gather database credentials from file
-    rds_engine = connection.init_db_engine(rds_creds) # create engine from credentials
-    table_list = connection.list_db_tables(rds_engine)# retrieve list of tables in database
-    user_data = table_list[1] # index list of tables to select user data
-    raw_user_data = extractor.read_rds_table(rds_engine, user_data) # return dataframe of user data
-    clean_user_data = cleaner.clean_user_data(raw_user_data) # clean user data
-    # Upload cleaned user data to sales_data database
-    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
-    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    connection.upload_to_db(sales_db_engine, clean_user_data, 'dim_users') # upload clean data to sales_data database
+    # Create SQLAlchemy engine from RDS credentials, get list of tables and indexes for
+    # raw user data. Raw user data then sent to data_cleaning.py.
+    rds_creds = connection.read_db_creds(rds_db_creds)
+    rds_engine = connection.init_db_engine(rds_creds)
+    table_list = connection.list_db_tables(rds_engine)
+    user_data = table_list[1]
+    raw_user_data = extractor.read_rds_table(rds_engine, user_data)
+    clean_user_data = cleaner.clean_user_data(raw_user_data)
+    # Create SQLAlchemy engine from PostgreSQL credentials, uploads clean user data.
+    sales_db_creds = connection.read_db_creds(sales_data_creds)
+    sales_db_engine = connection.init_db_engine(sales_db_creds)
+    connection.upload_to_db(sales_db_engine, clean_user_data, 'dim_users')
     
 def upload_card_data():
     '''
@@ -46,11 +46,11 @@ def upload_card_data():
     it. After this, the function connects to the PostgreSQL database and uploads the data
     under the name 'dim_card_details.'
     '''
-    # Retrieve and clean card payment data from pdf in link
+    # Uses link to retrieve raw card data from PDF. Card data sent to data_cleaning.py 
     link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf'
     raw_card_data = extractor.retrieve_pdf_data(link)
     clean_card_data = cleaner.clean_card_data(raw_card_data)
-    # Upload cleaned user data to sales_data database
+    # Create SQLAlchemy engine from PostgreSQL credentials, uploads clean card data.
     sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
     sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
     connection.upload_to_db(sales_db_engine, clean_card_data, 'dim_card_details') # upload clean data to sales_data database
@@ -76,10 +76,10 @@ def upload_store_data():
     num_stores = list_num_stores()
     store_data = extractor.retrieve_stores_data(retrieve_store_endpoint_base, api_key_header, num_stores)
     clean_store_data = cleaner.clean_store_data(store_data)
-    # Uploads cleaned store data to sales database
-    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
-    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details') # upload clean data to sales_data database
+    # Create SQLAlchemy engine from PostgreSQL credentials, uploads clean store data.
+    sales_db_creds = connection.read_db_creds(sales_data_creds)
+    sales_db_engine = connection.init_db_engine(sales_db_creds)
+    connection.upload_to_db(sales_db_engine, clean_store_data, 'dim_store_details')
 
 def upload_product_details():
     '''
@@ -94,10 +94,10 @@ def upload_product_details():
     # Converts product weights into kg then cleans data
     clean_weight_product_details = cleaner.convert_product_weights(raw_product_details)
     clean_product_details = cleaner.clean_product_data(clean_weight_product_details)
-    # Uploads cleaned product data to sales database
-    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
-    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    connection.upload_to_db(sales_db_engine, clean_product_details, 'dim_products') # upload clean data to sales_data database
+    # Create SQLAlchemy engine from PostgreSQL credentials, uploads clean product data.
+    sales_db_creds = connection.read_db_creds(sales_data_creds)
+    sales_db_engine = connection.init_db_engine(sales_db_creds)
+    connection.upload_to_db(sales_db_engine, clean_product_details, 'dim_products')
 
 def upload_orders_table():
     '''
@@ -108,18 +108,18 @@ def upload_orders_table():
     connects to the new PostgreSQL database, then cleaned order data is uploaded to the PostgreSQL
     database under the name 'orders_table.'
     '''
-    # Retrieves list of tables stores in AWS RDS, then selects and returns the orders_table.
-    # Raw orders_table is then cleaned and uploaded to sales_data database
-    rds_creds = connection.read_db_creds(rds_db_creds) # gather database credentials from file
-    rds_engine = connection.init_db_engine(rds_creds) # create engine from credentials
-    table_list = connection.list_db_tables(rds_engine)# retrieve list of tables in database
-    order_table = table_list[2] # index list of tables to select orders_table
-    raw_orders_table = extractor.read_rds_table(rds_engine, order_table) # return dataframe of orders_table
-    clean_orders_table = cleaner.clean_orders_data(raw_orders_table) # clean orders_data
-    # Uploads cleaned product data to sales database
-    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
-    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    connection.upload_to_db(sales_db_engine, clean_orders_table, 'orders_table') # upload clean order_table to sales_data database
+    # Create SQLAlchemy engine from RDS credentials, get list of tables and indexes for
+    # raw orders table. Raw orders table then sent to data_cleaning.py.
+    rds_creds = connection.read_db_creds(rds_db_creds)
+    rds_engine = connection.init_db_engine(rds_creds)
+    table_list = connection.list_db_tables(rds_engine)
+    order_table = table_list[2]
+    raw_orders_table = extractor.read_rds_table(rds_engine, order_table)
+    clean_orders_table = cleaner.clean_orders_data(raw_orders_table)
+    # Create SQLAlchemy engine from PostgreSQL credentials, uploads clean orders table.
+    sales_db_creds = connection.read_db_creds(sales_data_creds)
+    sales_db_engine = connection.init_db_engine(sales_db_creds)
+    connection.upload_to_db(sales_db_engine, clean_orders_table, 'orders_table')
 
 def upload_date_events():
     '''
@@ -134,26 +134,26 @@ def upload_date_events():
     date_events_address = 's3://data-handling-public/date_details.json'
     raw_date_events = extractor.extract_from_s3(date_events_address)
     clean_date_events = cleaner.clean_date_events(raw_date_events)
-    # Uploads cleaned product data to sales database
-    sales_db_creds = connection.read_db_creds(sales_data_creds) # gather database credentials from file
-    sales_db_engine = connection.init_db_engine(sales_db_creds) # create engine from credentials
-    connection.upload_to_db(sales_db_engine, clean_date_events, 'dim_date_times') # upload clean data to sales_data database
+    # Create SQLAlchemy engine from PostgreSQL credentials, uploads clean date events data.
+    sales_db_creds = connection.read_db_creds(sales_data_creds)
+    sales_db_engine = connection.init_db_engine(sales_db_creds)
+    connection.upload_to_db(sales_db_engine, clean_date_events, 'dim_date_times')
 
-# upload_user_data()
-# print("User data has now been cleaned and uploaded to the PostgreSQL database.")
+upload_user_data()
+print("User data has now been cleaned and uploaded to the PostgreSQL database.")
 
 upload_card_data()
 print("Card data has now been cleaned and uploaded to the PostgreSQL database.")
 
-# upload_store_data()
-# print("Store data has now been cleaned and uploaded to the PostgreSQL database.")
+upload_store_data()
+print("Store data has now been cleaned and uploaded to the PostgreSQL database.")
 
-# upload_product_details()
-# print("Product details have now been cleaned and uploaded to the PostgreSQL database.")  
+upload_product_details()
+print("Product details have now been cleaned and uploaded to the PostgreSQL database.")  
 
-# upload_orders_table()
-# print("Order data has now been cleaned and uploaded to the PostgreSQL database.")
+upload_orders_table()
+print("Order data has now been cleaned and uploaded to the PostgreSQL database.")
 
-# upload_date_events()
-# print("Date event date has now been cleaned and uploaded to the PostgreSQL database.")
-# print("All data has now been cleaned and uploaded to the PostgreSQL database!")
+upload_date_events()
+print("Date event date has now been cleaned and uploaded to the PostgreSQL database.")
+print("All data has now been cleaned and uploaded to the PostgreSQL database!")

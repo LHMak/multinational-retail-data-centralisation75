@@ -79,8 +79,6 @@ class DataExtractor:
         Returns:
             num_stores: a JSON response listing the number of stores in the business.
         '''
-        # Sends get request to number of stores API endpoint,
-        # receives total number of stores and returns this to main.py
         num_stores_response = requests.get(num_stores_endpoint, headers=api_key_header)
         num_stores = num_stores_response.json()['number_stores']
         return num_stores
@@ -102,9 +100,6 @@ class DataExtractor:
         Returns:
             store_data: a pandas dataframe containing the data for each store in the business.
         '''
-        # Uses the number of stores received from list_number_of_stores
-        # to send a get requesst to the API for each store.
-        # Concats all responses into one dataframe and returns it to main.py 
         store_data_response_list= []
         for store in range(num_stores):
             retrieve_store_endpoint = retrieve_store_endpoint_base + str(store)

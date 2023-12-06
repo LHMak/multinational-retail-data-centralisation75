@@ -75,8 +75,8 @@ class DataCleaning:
         # Cleans card_number column by casting as string and uses regex to match rows
         # with only numeric characters.
         raw_card_data['card_number'] = raw_card_data['card_number'].astype('string').str.replace(r'[^0-9]+', '', regex=True)
-        # Removes null data by getting unique values in card_provider column.
-        # Any rows with card_provider values not matching the list below are dropped.
+        # Removes null data by getting unique values in card_provider column. Any rows with card_provider
+        # values not matching the list below are dropped.
         valid_card_providers = ['Diners Club / Carte Blanche', 'American Express',
                                 'JCB 16 digit', 'JCB 15 digit', 'Maestro',
                                 'Mastercard', 'Discover', 'VISA 19 digit',
