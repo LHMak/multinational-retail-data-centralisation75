@@ -1,0 +1,146 @@
+Milestone 4: 
+
+Task1 :
+SELECT country_code AS "country", count(country_code) AS "total_no_stores" FROM dim_store_details
+WHERE country_code != 'N/A'
+GROUP BY country_code
+
+
+Task2:
+SELECT locality, count(locality) AS "total_no_stores" FROM dim_store_details
+WHERE country_code != 'N/A'
+GROUP BY locality
+ORDER BY count(locality) DESC
+LIMIT 7
+
+
+Task3:
+SELECT
+	ROUND(SUM(dim_products.product_price * orders_table.product_quantity)::numeric,2) AS "total_sales",
+	EXTRACT(MONTH FROM TO_DATE(month, 'Month')) AS "month"
+FROM orders_table
+JOIN dim_products ON dim_products.product_code = orders_table.product_code
+JOIN dim_date_times ON dim_date_times.date_uuid = orders_table.date_uuid
+GROUP BY EXTRACT(MONTH FROM TO_DATE(month, 'Month'))
+ORDER BY SUM(dim_products.product_price * orders_table.product_quantity) DESC
+LIMIT 6
+
+
+Task4:
+SELECT
+	COUNT(*) AS number_of_sales,
+	SUM(orders_table.product_quantity) AS product_quantity_count,
+	CASE
+		WHEN dim_store_details.store_type = 'Web Portal' THEN 'Web'
+		ELSE 'Offline'
+	END AS "location"
+FROM orders_table
+JOIN dim_store_details ON dim_store_details.store_code = orders_table.store_code
+GROUP BY "location"
+ORDER BY COUNT(*) ASC
+
+
+Task5:
+SELECT
+	store.store_type,
+	ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) AS total_sales,
+	ROUND((SUM(products.product_price * orders.product_quantity) /
+	(
+		SELECT SUM(dim_products.product_price * orders_table.product_quantity)
+		FROM orders_table
+		JOIN dim_products ON dim_products.product_code = orders_table.product_code
+	) * 100)::numeric, 2) AS "percentage_total"
+FROM orders_table orders
+JOIN dim_products products
+	ON products.product_code = orders.product_code
+JOIN dim_store_details store
+	ON store.store_code = orders.store_code
+GROUP BY store.store_type
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) DESC
+
+
+Task6:
+SELECT
+	ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) AS total_sales,
+	dates.year,
+	EXTRACT(MONTH FROM TO_DATE(month, 'Month')) AS "month"
+FROM orders_table orders
+JOIN dim_products products
+	ON products.product_code = orders.product_code
+JOIN dim_date_times dates
+	ON dates.date_uuid = orders.date_uuid
+GROUP BY dates.year, dates.month
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) DESC
+LIMIT 10
+
+
+Task7:
+SELECT
+	SUM(staff_numbers) AS total_staff_numbers,
+	country_code
+FROM dim_store_details
+WHERE country_code != 'N/A'
+GROUP BY country_code
+ORDER BY SUM(staff_numbers) DESC
+
+
+Task7:
+SELECT
+	SUM(staff_numbers) AS total_staff_numbers,
+	CASE
+		WHEN country_code = 'N/A' THEN 'GB'
+		ELSE country_code
+	END AS country
+FROM dim_store_details
+GROUP BY country
+ORDER BY SUM(staff_numbers) DESC
+
+
+Task8:
+SELECT
+	ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) AS total_sales,
+	store.store_type,
+	store.country_code
+FROM dim_store_details store
+JOIN orders_table orders
+	ON orders.store_code = store.store_code
+JOIN dim_products products
+	ON products.product_code = orders.product_code
+WHERE store.country_code = 'DE'
+GROUP BY store.country_code, store.store_type
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) ASC
+
+
+Task9:
+WITH cte AS(
+	SELECT TO_TIMESTAMP(CONCAT(year, '-', EXTRACT(MONTH FROM TO_DATE(month, 'Month')), '-', day::text, ' ', timestamp), 'YYYY-MM-DD HH24:MI:SS') AS datetimes,
+       year
+	FROM dim_date_times
+),
+
+cte2 AS(
+	SELECT
+		year,
+		datetimes,
+	LEAD(datetimes, 1) OVER (ORDER BY datetimes DESC) AS time_difference
+	FROM cte
+),
+
+cte3 AS (
+	SELECT
+		year, AVG((datetimes - time_difference)) as time_interval
+	FROM cte2
+	GROUP BY year
+	ORDER BY AVG((datetimes - time_difference)) DESC
+	LIMIT 5
+)
+
+SELECT
+	year,
+	CONCAT(
+		'"hours": ', EXTRACT(HOUR FROM time_interval), ',',
+		'"minutes": ', EXTRACT(MINUTE FROM time_interval),',',
+		'"seconds": ', EXTRACT(SECOND FROM time_interval),',',
+		'"milliseconds": ', EXTRACT(MILLISECOND FROM time_interval)
+	) AS actual_time_taken
+FROM cte3
