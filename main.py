@@ -10,6 +10,8 @@ cleaner = DataCleaning()
 # Assigning database credentials to variables
 rds_db_creds = 'db_creds.yaml'
 sales_data_creds = 'sales_data_creds.yaml'
+# Assigning API key to variable
+api_key_header = 'api_key_header.yaml'
 # Assigning API endpoints and api key as variables to connect to store data API
 num_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
 retrieve_store_endpoint_base = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
@@ -60,7 +62,7 @@ def list_num_stores():
     of this script and makes a get request to receive the number of stores.
     '''
     num_stores = extractor.list_number_of_stores(num_stores_endpoint, api_key_header)
-    return num_stores
+    print(num_stores)
 
 def upload_store_data():
     '''

@@ -5,6 +5,7 @@ import tabula
 import requests
 import boto3
 import os
+import yaml
 
 
 class DataExtractor:
@@ -65,7 +66,7 @@ class DataExtractor:
         raw_card_data = pd.concat(list_of_dfs)
         return raw_card_data
 
-    def list_number_of_stores(self,num_stores_endpoint, api_key_header):
+    def list_number_of_stores(self,num_stores_endpoint, key_header):
         '''
         This function lists the number of stores in the business.
 
@@ -79,6 +80,8 @@ class DataExtractor:
         Returns:
             num_stores: a JSON response listing the number of stores in the business.
         '''
+        with open(key_header, 'r') as api_key_header_file:
+            api_key_header = yaml.safe_load(api_key_header_file)
         num_stores_response = requests.get(num_stores_endpoint, headers=api_key_header)
         num_stores = num_stores_response.json()['number_stores']
         return num_stores
