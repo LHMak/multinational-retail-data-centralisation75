@@ -12,6 +12,7 @@ In order to remedy this issue, this project did the following:
 1. Extracted all data from the various sources such as: AWS S3 buckets, AWS cloud databases and APIs hosted on AWS. The data also took many forms such as: PDF, JSON and CSV files. This required me to tailor my extraction approach for each datasource. For example, user and order data was stored in a database, while product and payment data was stored in an S3 bucket.
 1. Cleaned the raw data, looking for inconsistent formatting (particularly with dates and times), typos and null values. To clean the data I mainly used the Pandas Python library. I also used the re and numpy libraries.
 1. Uploaded the cleaned data to a PostgreSQL database, allowing for easy querying and analysis of the data. I used PGAdmin as a management tool for the PostgreSQL database.
+1. Queries the PostgreSQL database to answer a set of mock questions from business stakeholders. The queries are shown 
 
 This project helped me to consolidate everything I have learned throughout the course. I used my knowledge of AWS and APIs to retrieve the data files, my skills with VS Code and Python to write the code to process the data and upload it to the PostgreSQL database- and finally, my knowledge and skills with Relational Databases and SQL to create the database schema, query and analyse the data. On top of this, I made more use of version control and branching with Git more than ever before- particularly when adding in new features.
 
@@ -37,7 +38,7 @@ Because of this, my confidence with with all of these skills has grown substanti
   - pgAdmin 4
 
 ## Usage Instructions
-**Prerequisites:** You will need a db_creds.yaml file, which contains the credentials to connect to the source AWS database, and a sales_data_creds.yaml file, which contains the credentials to connect to the targest PostgreSQL database.
+**Prerequisites:** You will need a db_creds.yaml file, which contains the credentials to connect to the source AWS database, and a sales_data_creds.yaml file, which contains the credentials to connect to the targest PostgreSQL database. Finally, you will need a api_key_header.yaml file which contains an X API key to be used in the headers of a get request for listing the number of stores in the business.
 
 Once these prerequisites are satisfied, just run main.py. Once this script has terminated, the PostgreSQL database will now hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
 
@@ -49,6 +50,7 @@ Once these prerequisites are satisfied, just run main.py. Once this script has t
 - **database_utils.py:** This script introduces the DatabaseConnector class, which is responsible for reading database credentials (in the form of a .YAML file); initialising an SQLAlchemy/psycopg2 engine to manage the connection to a database; listing the tables in a databse to allow selection of data for extraction and finally, uploading cleaned data to the target PostgreSQL database.
 - **data_extraction.py:** This script introduces the DataExtractor class, which is responsible for extracting data from a source and generating a pandas dataframe from it if cleaning is required. This class contains 5 extraction functions, which extract from the following source types: RDS tables, PDF documents, APIs, JSON and CSV files.
 - **data_cleaning.py:** This script introduces the DataCleaning class, which is responsible for taking in raw data and cleaning it. The data cleaning methods are different for each data source- but typically, null and erroneous entries are identified and removed, typos are corrected and columns are cast to their intended datatypes.
+- **Milestone 4 Queries
 
 ## License Information
 This project is licensed under the terms of the MIT license.
