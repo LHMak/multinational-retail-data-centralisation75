@@ -11,7 +11,7 @@ In order to remedy this issue, this project did the following:
 
 1. Extracted all data from the various sources such as: AWS S3 buckets, AWS cloud databases and APIs hosted on AWS. The data also took many forms such as: PDF, JSON and CSV files. This required me to tailor my extraction approach for each datasource. For example, user and order data was stored in a database, while product and payment data was stored in an S3 bucket.
 1. Cleaned the raw data, looking for inconsistent formatting (particularly with dates and times), typos and null values. To clean the data I mainly used the Pandas Python library. I also used the re and numpy libraries.
-1. Uploaded the cleaned data to a PostgreSQL database, allowing for easy querying and analysis of the data. I used PGAdmin as a management tool for the PostgreSQL database.
+1. Uploaded the cleaned data to a local PostgreSQL database, allowing for easy querying and analysis of the data. I used PGAdmin as a management tool for the PostgreSQL database.
 1. Queries the PostgreSQL database to answer a set of mock questions from business stakeholders. The queries are shown in 
 
 This project helped me to consolidate everything I have learned throughout the course. I used my knowledge of AWS and APIs to retrieve the data files, my skills with VS Code and Python to write the code to process the data and upload it to the PostgreSQL database- and finally, my knowledge and skills with Relational Databases and SQL to create the database schema, query and analyse the data. On top of this, I made more use of version control and branching with Git more than ever before- particularly when adding in new features.
@@ -38,7 +38,13 @@ Because of this, my confidence with with all of these skills has grown substanti
   - pgAdmin 4
 
 ## Usage Instructions
-**Prerequisites:** You will need a db_creds.yaml file, which contains the credentials to connect to the source AWS database, and a sales_data_creds.yaml file, which contains the credentials to connect to the targest PostgreSQL database. Finally, you will need a api_key_header.yaml file which contains an X API key to be used in the headers of a get request for listing the number of stores in the business.
+**Prerequisites:** 
+- A local SQL database and corresponding server (pgAdmin4 in my case)
+- **[TODO] Add structure of credential files**
+- "db_creds.yaml" file containing the credentials to connect to the source AWS database
+- "sales_data_creds.yaml" file, containing the credentials to connect to the targest PostgreSQL database
+- "api_key_header.yaml" file containing an X API key to be used in the headers of a get request for listing the number of stores in the business.
+- **[TODO] add imported Python libraries and modules**
 
 Once these prerequisites are satisfied, just run main.py. Once this script has terminated, the PostgreSQL database will now hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
 
