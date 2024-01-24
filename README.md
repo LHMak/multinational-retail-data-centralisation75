@@ -1,6 +1,12 @@
 # Multinational Retail Data Centralisation project
 Collates, cleans and centralises store data into a single location.
 
+
+## Project Brief
+> You work for a multinational company that sells various goods across the globe. Currently, their sales data is spread across many different data sources making it not easily accessible or analysable by current members of the team. In an effort to become more data-driven, your organisation would like to make its sales data accessible from one centralised location.
+
+> Your first goal will be to produce a system that stores the current company data in a database so that it's accessed from one centralised location and acts as a single source of truth for sales data. You will then query the database to get up-to-date metrics for the business.
+
 ## Project Description
 
 I have undertaken this project as part of the AiCore Cloud Engineering pathway. The aim of this project was to collate, clean and centralise the sales data from a fictional multinational company. 
@@ -36,6 +42,17 @@ Because of this, my confidence with with all of these skills has grown substanti
   - Pylance
 - PostgreSQL
   - pgAdmin 4
+
+## Milestone 1: Set up the environment
+This project was split up into 4 milestones. This first milestone's goal was to set up this GitHub repository so I could save my code and track any changes.
+
+One feature of Github I used extensively through this project was branching. Every time I needed to add a new feature (such as extracting data from a new data source) I would check out to a new branch. This would allow me write new code and test its functionality without affecting my main version of the project. Once I was happy with my work, I would merge the feature branch with the main branch.
+
+In total, I utilised 13 branches:
+<img width="968" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/ebb6fe96-2c4e-4d71-83de-a403204e519c">
+
+## Milestone 2: Extract and clean the data from the data sources
+
 
 ## Usage Instructions
 **Prerequisites:** 
