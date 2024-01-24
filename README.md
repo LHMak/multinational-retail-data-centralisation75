@@ -12,7 +12,7 @@ In order to remedy this issue, this project did the following:
 1. Extracted all data from the various sources such as: AWS S3 buckets, AWS cloud databases and APIs hosted on AWS. The data also took many forms such as: PDF, JSON and CSV files. This required me to tailor my extraction approach for each datasource. For example, user and order data was stored in a database, while product and payment data was stored in an S3 bucket.
 1. Cleaned the raw data, looking for inconsistent formatting (particularly with dates and times), typos and null values. To clean the data I mainly used the Pandas Python library. I also used the re and numpy libraries.
 1. Uploaded the cleaned data to a local PostgreSQL database, allowing for easy querying and analysis of the data. I used PGAdmin as a management tool for the PostgreSQL database.
-1. Queries the PostgreSQL database to answer a set of mock questions from business stakeholders. The queries are shown in 
+1. Queries the PostgreSQL database to answer a set of mock questions from business stakeholders. The `.sql` files for these queries can be found here: [Milestone_4_Queries.zip](Milestone_4_Queries.zip)
 
 This project helped me to consolidate everything I have learned throughout the course. I used my knowledge of AWS and APIs to retrieve the data files, my skills with VS Code and Python to write the code to process the data and upload it to the PostgreSQL database- and finally, my knowledge and skills with Relational Databases and SQL to create the database schema, query and analyse the data. On top of this, I made more use of version control and branching with Git more than ever before- particularly when adding in new features.
 
@@ -44,7 +44,7 @@ Because of this, my confidence with with all of these skills has grown substanti
   - `db_creds.yaml` - File containing the credentials to connect to the source AWS database
   - `sales_data_creds.yaml` - File containing the credentials to connect to the targest PostgreSQL database
   - This screenshot shows the required template the credential YAML files must follow:
-  - 
+   
     ![TEMPLATE_creds](https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/79969bed-321e-4662-8ee6-9d5fa8102478)
 
 - `api_key_header.yaml` - File containing an X-API-key to be used in the headers of a get request for listing the number of stores in the business.
@@ -54,18 +54,22 @@ Because of this, my confidence with with all of these skills has grown substanti
     
 - **[TODO] add imported Python libraries and modules**
 
-Once these prerequisites are satisfied, just run main.py. Once this script has terminated, the PostgreSQL database will now hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
+Once these prerequisites are satisfied, just run main.py. Once this script has terminated, the PostgreSQL database will hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
+
+## Milestone 4: Querying the data.
+In this milestone, the goal was to answer a set of business questions using the newly created database.
+
+The questions were:
 
 ## File Structure of Project
 - **.gitignore:** Contains list of files which are not tracked by Git. In particular for this project, database credentials are included in the gitignore file and so, are not uploaded to this Github repository.
 - **LICENSE:** The License (MIT) file for this project.
-- **REAME.md:** The README markdown file for this project. Contains information about the project's purpose, tools used, file structure, etc.
-- **TEMPLATE_cred.yaml:** a YAML file which shows the structure of the YAML files required to run this project (db_creds.yaml and sales_data_creds.yaml).
+- **README.md:** The README markdown file for this project. Contains information about the project's purpose, tools used, file structure, etc.
 - **main.py:** This Python script serves are the main controller of the project processes. It works by calling functions from the DatabseConnector, DataExtractor and DataCleaning classes described in the following 3 Python scripts. By using a main.py script, the data that has been extracted by the DataExtractor can be passed to the DataCleaning class; then to the DatabaseConnector to upload to the centralised PostgreSQL database.
 - **database_utils.py:** This script introduces the DatabaseConnector class, which is responsible for reading database credentials (in the form of a .YAML file); initialising an SQLAlchemy/psycopg2 engine to manage the connection to a database; listing the tables in a databse to allow selection of data for extraction and finally, uploading cleaned data to the target PostgreSQL database.
 - **data_extraction.py:** This script introduces the DataExtractor class, which is responsible for extracting data from a source and generating a pandas dataframe from it if cleaning is required. This class contains 5 extraction functions, which extract from the following source types: RDS tables, PDF documents, APIs, JSON and CSV files.
 - **data_cleaning.py:** This script introduces the DataCleaning class, which is responsible for taking in raw data and cleaning it. The data cleaning methods are different for each data source- but typically, null and erroneous entries are identified and removed, typos are corrected and columns are cast to their intended datatypes.
-- **Milestone_4_Queries.zip:** This .zip folder contains 10 .sql files. Each file contains a query to answer one of the questions from a business stakeholder.
+- **Milestone_4_Queries.zip:** This `.zip` folder contains 10 `.sql` files. Each file contains a query to answer one of the questions from a business stakeholder.
 
 ## License Information
 This project is licensed under the terms of the MIT license.
