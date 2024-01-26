@@ -76,13 +76,25 @@ In total, I utilised 13 branches:
 <img width="968" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/ebb6fe96-2c4e-4d71-83de-a403204e519c">
 
 ### Milestone 2: Extract and clean the data from the data sources
-With this GitHub repo set up, it was time to move onto Milestone 2. The goal of this milestone was to extract all of the data from each data source, clean it and then store it in a new database.
+#### Task 1: Set up a new database to store the data
+With the GitHub repo set up, it was time to move onto Milestone 2. The goal of this milestone was to extract all of the data from each data source, clean it and then store it in a new database.
 
 I began by creating the a PostgreSQL database using pgAdmin4. This database would act as the destination for the data. To do this, I right-clicked on Databases under the default PostgreSQL server in pgAdmin4. From there, I selected `Create > Database...` 
 
 <img width="873" alt="m2 1 create db3" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/f9bece57-d3c1-4888-9ac9-b78cbd83e0f7">
- I named the database 'sales_data'
+ 
+ I named the database 'sales_data' and then moved on to writing my first bit of Python code for this project.
+ 
+#### Task 2: Initialise the three project Classes
+To achieve the goal of centralising all of the data, I would need to:
 
+- Retrieve the data from its source (e.g. Amazon S3 bucket, PDF file, API).
+- Clean the data (e.g. remove non-numeric characters from card numbers, remove any corrupted rows, convert dates to a specific format).
+- Upload the cleaned data to the new database, sales_data.
+
+Therefore, I decided that these interactions would be best separated into 3 custom Python classes: 'DataExtractor', 'DatabaseConnector', 'DataCleaning'. I could then create methods for each class to handle any funcitonality I would need, such as extracting data from a PDF file (DataExtractor) or stripping card numbers of any non-numeric characters(DataCleaning).
+
+Rather than having one
 
 ### Milestone 4: Querying the data.
 In this milestone, the goal was to answer a set of business questions using the newly created database.
