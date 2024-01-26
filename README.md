@@ -42,21 +42,7 @@ Because of this, my confidence with with all of these skills has grown substanti
   - Pylance
 - PostgreSQL
   - pgAdmin 4
-
-## Milestone 1: Set up the environment
-This project was split up into 4 milestones. This first milestone's goal was to set up this GitHub repository so I could save my code and track any changes.
-
-One feature of Github I used extensively through this project was branching. Every time I needed to add a new feature (such as extracting data from a new data source) I would check out to a new branch. This would allow me write new code and test its functionality without affecting my main version of the project. Once I was happy with my work, I would merge the feature branch with the main branch.
-
-In total, I utilised 13 branches:
-<img width="968" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/ebb6fe96-2c4e-4d71-83de-a403204e519c">
-
-## Milestone 2: Extract and clean the data from the data sources
-With this GitHub repo set up, it was time to move onto Milestone 2. The goal of this milestone was to extract all of the data from each data source, clean it and then store it in a new database.
-
-I began by creating the a PostgreSQL database using pgAdmin4. This database would act as the destination for the data.
-
-
+ 
 ## Usage Instructions
 **Prerequisites:** 
 - A local SQL database and corresponding server (pgAdmin4 in my case)
@@ -76,7 +62,25 @@ I began by creating the a PostgreSQL database using pgAdmin4. This database woul
 
 Once these prerequisites are satisfied, just run main.py. Once this script has terminated, the PostgreSQL database will hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
 
-## Milestone 4: Querying the data.
+## Project write-up
+In this section, I explain how I completed this project, the methods and software I used and challenges I faced.
+
+The project was split up into 4 stages, or 'Milestones.' Each Milestone is explained below.
+
+### Milestone 1: Set up the environment
+This project was split up into 4 milestones. This first milestone's goal was to set up this GitHub repository so I could save my code and track any changes.
+
+One feature of Github I used extensively through this project was branching. Every time I needed to add a new feature (such as extracting data from a new data source) I would check out to a new branch. This would allow me write new code and test its functionality without affecting my main version of the project. Once I was happy with my work, I would merge the feature branch with the main branch.
+
+In total, I utilised 13 branches:
+<img width="968" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/ebb6fe96-2c4e-4d71-83de-a403204e519c">
+
+### Milestone 2: Extract and clean the data from the data sources
+With this GitHub repo set up, it was time to move onto Milestone 2. The goal of this milestone was to extract all of the data from each data source, clean it and then store it in a new database.
+
+I began by creating the a PostgreSQL database using pgAdmin4. This database would act as the destination for the data.
+
+### Milestone 4: Querying the data.
 In this milestone, the goal was to answer a set of business questions using the newly created database.
 
 The questions were:
