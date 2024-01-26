@@ -78,7 +78,11 @@ In total, I utilised 13 branches:
 ### Milestone 2: Extract and clean the data from the data sources
 With this GitHub repo set up, it was time to move onto Milestone 2. The goal of this milestone was to extract all of the data from each data source, clean it and then store it in a new database.
 
-I began by creating the a PostgreSQL database using pgAdmin4. This database would act as the destination for the data.
+I began by creating the a PostgreSQL database using pgAdmin4. This database would act as the destination for the data. To do this, I right-clicked on Databases under the default PostgreSQL server in pgAdmin4. From there, I selected `Create > Database...` 
+
+<img width="873" alt="m2 1 create db3" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/f9bece57-d3c1-4888-9ac9-b78cbd83e0f7">
+ I named the database 'sales_data'
+
 
 ### Milestone 4: Querying the data.
 In this milestone, the goal was to answer a set of business questions using the newly created database.
