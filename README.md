@@ -58,9 +58,18 @@ Because of this, my confidence with with all of these skills has grown substanti
 
     ![TEMPLATE_x_api_key](https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/e8a3db13-eacc-4b07-bc30-eb435da59b0a)
     
-- **[TODO] add imported Python libraries and modules**
+- You will require the following Python modules and libraries:
+  - YAML
+  - SQLAlchemy
+  - pandas
+  - Tabula
+  - Requests
+  - boto3
+  - OS
+  - re
+  - NumPy
 
-Once these prerequisites are satisfied, just run main.py. Once this script has terminated, the PostgreSQL database will hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
+Once these prerequisites are satisfied, just run main.py and when the script has terminated, your local database should hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
 
 ## Project write-up
 In this section, I explain how I completed this project, the methods and software I used and challenges I faced.
@@ -102,14 +111,14 @@ In this milestone, the goal was to answer a set of business questions using the 
 The questions were:
 
 ## File Structure of Project
-- **.gitignore:** Contains list of files which are not tracked by Git. In particular for this project, database credentials are included in the gitignore file and so, are not uploaded to this Github repository.
-- **LICENSE:** The License (MIT) file for this project.
-- **README.md:** The README markdown file for this project. Contains information about the project's purpose, tools used, file structure, etc.
-- **main.py:** This Python script serves are the main controller of the project processes. It works by calling functions from the DatabseConnector, DataExtractor and DataCleaning classes described in the following 3 Python scripts. By using a main.py script, the data that has been extracted by the DataExtractor can be passed to the DataCleaning class; then to the DatabaseConnector to upload to the centralised PostgreSQL database.
-- **database_utils.py:** This script introduces the DatabaseConnector class, which is responsible for reading database credentials (in the form of a .YAML file); initialising an SQLAlchemy/psycopg2 engine to manage the connection to a database; listing the tables in a databse to allow selection of data for extraction and finally, uploading cleaned data to the target PostgreSQL database.
-- **data_extraction.py:** This script introduces the DataExtractor class, which is responsible for extracting data from a source and generating a pandas dataframe from it if cleaning is required. This class contains 5 extraction functions, which extract from the following source types: RDS tables, PDF documents, APIs, JSON and CSV files.
-- **data_cleaning.py:** This script introduces the DataCleaning class, which is responsible for taking in raw data and cleaning it. The data cleaning methods are different for each data source- but typically, null and erroneous entries are identified and removed, typos are corrected and columns are cast to their intended datatypes.
-- **Milestone_4_Queries.zip:** This `.zip` folder contains 10 `.sql` files. Each file contains a query to answer one of the questions from a business stakeholder.
+- `.gitignore`: Contains list of files which are not tracked by Git. In particular for this project, database credentials are included in the gitignore file and so, are not uploaded to this Github repository.
+- `LICENSE`: The License (MIT) file for this project.
+- `README.md`: The README markdown file for this project. Contains information about the project's purpose, tools used, file structure, etc.
+- `main.py`: This Python script serves are the main controller of the project processes. It works by calling functions from the DatabseConnector, DataExtractor and DataCleaning classes described in the following 3 Python scripts. By using a main.py script, the data that has been extracted by the DataExtractor can be passed to the DataCleaning class; then to the DatabaseConnector to upload to the centralised PostgreSQL database.
+- `database_utils.py`: This script introduces the DatabaseConnector class, which is responsible for reading database credentials (in the form of a .YAML file); initialising an SQLAlchemy/psycopg2 engine to manage the connection to a database; listing the tables in a databse to allow selection of data for extraction and finally, uploading cleaned data to the target PostgreSQL database.
+- `data_extraction.py`: This script introduces the DataExtractor class, which is responsible for extracting data from a source and generating a pandas dataframe from it if cleaning is required. This class contains 5 extraction functions, which extract from the following source types: RDS tables, PDF documents, APIs, JSON and CSV files.
+- `data_cleaning.py`: This script introduces the DataCleaning class, which is responsible for taking in raw data and cleaning it. The data cleaning methods are different for each data source- but typically, null and erroneous entries are identified and removed, typos are corrected and columns are cast to their intended datatypes.
+- `Milestone_4_Queries.zip`: This `.zip` folder contains 10 `.sql` files. Each file contains a query to answer one of the questions from a business stakeholder.
 
 ## License Information
 This project is licensed under the terms of the MIT license.
