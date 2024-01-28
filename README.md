@@ -20,7 +20,7 @@ The company sells goods across the globe and their sales data was spread across 
   - Orders table: Table in which each column is a UUID from one of the other data sources. It acts as the centre of the star-based schema made in the the destination PostgreSQL database.
 
 - An AWS S3 bucket:
-  - Card details: PDF document containing customer card details.
+  - Card details: PDF document containing customer payment card details.
   - Product data: CSV file containing information about goods the company sells.
   - Date events data: JSON object containing details of each sale the company has made.
 
@@ -141,15 +141,19 @@ To change the data type of a column, I used the query tool in pgAdmin4 and wrote
 ALTER TABLE {table_name}
     ALTER COLUMN {column_name} TYPE {data type};
 ```
-This allowed me to correct any instances where a column had been interpreted incorrectly. For example originally the `product_price` column of the `dim_products` table was interpreted as the TEXT data type. As the product prices were always decimal numbers (e.g. £29.99) I converted the column to the FLOAT data type.
+This allowed me to correct any instances where a column had been interpreted incorrectly. For example originally the `product_price` column of the `dim_products` table was interpreted as the TEXT data type. As prices are always decimal numbers (e.g. 29.99) I converted the column to the FLOAT data type.
 
-After this, I linked the information in the tables together so that business analysis to be performed.
+After this repeating this for each column in the database, I linked the information in the tables together so that business analysis to be performed.
 
-Each table had an identifying column with unique values, referred to as a Universally Unique Identifier (UUID). These columns were used to link information across the tables. For example, the user data table had the `user_uuid` column, the card details table had the `card_number` column and the product data table had the `product code` column. The Orders table consisted of columns which contained the same UUIDs as the other tables. 
+Each table had a column in which each entry was unique and could be used to identify the entry (e.g. the `user_uuid` column of the user data table or the `product_code` of the product data table). This type of column is referred to as a Universally Unique Identifier (UUID). These UUID columns were also present in the orders table, meaning that information could be linked between different tables via the orders table.
 
-Columns such as card numbers, data UUIDs and product codes, which were unique to each entry, were linked to the orders table by casting as UUIDs and setting them as the primary keys for the respective table. creating the schema and ensuring table columns were cast as the correct data types.
+For example, to find which months products the most sales I could link the products table to the orders table via the `product_code` UUID, then link the date events table to the orders table via the `date_uuid` column. This would allow all me to a transaction from a specific date and time, find its `date_uuid` in the orders table, refer to the corresponding `product_code` and find the product in the products table.
 
-The database would form a star-based schema with the Orders table at the centre. The other tables would be related to the orders table via UUIDs
+By linking the tables like this, I created a star-based schema with the orders table at the centre:
+
+![image](https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/62bcb96b-aa63-4675-880b-7a79cb8a6c45)
+
+
 
 
 ### Milestone 4: Querying the data.
