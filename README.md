@@ -5,27 +5,43 @@ Collates, cleans and centralises store data into a single location.
 ## Project Brief
 > You work for a multinational company that sells various goods across the globe. Currently, their sales data is spread across many different data sources making it not easily accessible or analysable by current members of the team. In an effort to become more data-driven, your organisation would like to make its sales data accessible from one centralised location.
 
-> Your first goal will be to produce a system that stores the current company data in a database so that it's accessed from one centralised location and acts as a single source of truth for sales data. You will then query the database to get up-to-date metrics for the business.
+> Your first goal will be to produce a system that stores the current company data in a database so that it's accessed from one centralised location and acts as a single source of truth for sales data. You will then query the database to get up-to-date metrics for the company.
 
 ## Project Description
 
-I have undertaken this project as part of the AiCore Cloud Engineering pathway. The aim of this project was to collate, clean and centralise the sales data from a fictional multinational company. 
+I undertook this project as part of the AiCore Cloud Engineering pathway. The aim was to collate, clean and centralise the sales data from a fictional multinational retail company
 
-The company sells goods across the globe and their sales data was spread across many different data sources. This meant the data was not easily accessible or analysable.
+_As a disclaimer- the data used for this project was fictional, so no real customer/company data is being leaked!_ 
 
-In order to remedy this issue, this project did the following:
+The company sells goods across the globe and their sales data was spread across many different data sources. This meant the data was not easily accessible or analysable. The various data sources were:
 
-1. Extracted all data from the various sources such as: AWS S3 buckets, AWS cloud databases and APIs hosted on AWS. The data also took many forms such as: PDF, JSON and CSV files. This required me to tailor my extraction approach for each datasource. For example, user and order data was stored in a database, while product and payment data was stored in an S3 bucket.
-1. Cleaned the raw data, looking for inconsistent formatting (particularly with dates and times), typos and null values. To clean the data I mainly used the Pandas Python library. I also used the re and numpy libraries.
-1. Uploaded the cleaned data to a local PostgreSQL database, allowing for easy querying and analysis of the data. I used PGAdmin as a management tool for the PostgreSQL database.
-1. Queries the PostgreSQL database to answer a set of mock questions from business stakeholders. The `.sql` files for these queries can be found here: [Milestone_4_Queries.zip](Milestone_4_Queries.zip)
+- An SQL database hosted on AWS RDS containing:
+  - User data: Table containing historical data of customers.
+  - Orders table: Table in which each column is a UUID from one of the other data sources. It acts as the centre of the star-based schema made in the the destination PostgreSQL database.
+
+- An AWS S3 bucket:
+  - Card details: PDF document containing customer card details.
+  - Product data: CSV file containing information about goods the company sells.
+  - Date events data: JSON object containing details of each sale the company has made.
+
+- An API which had two GET methods:
+  - Number of stores: JSON object recording the number of stores in the business.
+  - Store details: JSON object containing details of each store in the business (e.g. address, staff numbers, store code).
+
+
+In order to centralise the various pieces of data into once location, this project did the following:
+
+1. Extracted all data from the various sources, tailoring my extraction approach for each data source. For example, user and order data was stored in a database, while product and payment data was stored in an S3 bucket.
+1. Cleaned the raw data, looking for inconsistent formatting (particularly with dates and times), typos and null values. To clean the data I mainly used the Pandas Python library. I also used the re and NumPy libraries.
+1. Uploaded the cleaned data to a local PostgreSQL database, allowing for easy querying and analysis of the data. I used pgAdmin4 as a management tool for the PostgreSQL database.
+1. Queries the PostgreSQL database to answer a set of questions from business stakeholders. The `.sql` files for these queries can be found here: [Milestone_4_Queries.zip](Milestone_4_Queries.zip)
 
 This project helped me to consolidate everything I have learned throughout the course. I used my knowledge of AWS and APIs to retrieve the data files, my skills with VS Code and Python to write the code to process the data and upload it to the PostgreSQL database- and finally, my knowledge and skills with Relational Databases and SQL to create the database schema, query and analyse the data. On top of this, I made more use of version control and branching with Git more than ever before- particularly when adding in new features.
 
 Because of this, my confidence with with all of these skills has grown substantially. I have also come to appreciate just how much I have learnt in the last ~1.5 months.
 
 ## Tools used
-- Python
+- Python (with following modules & libraries):
   - Pandas library
   - PandasGUI
   - Regular expression operations (re) module
@@ -37,7 +53,7 @@ Because of this, my confidence with with all of these skills has grown substanti
   - AWS SDK for Python (boto3)
   - OS module
   - YAML library
-- VS Code
+- VS Code (with following extensions:)
   - Python extension for VS Code
   - Pylance
 - PostgreSQL
@@ -45,15 +61,15 @@ Because of this, my confidence with with all of these skills has grown substanti
  
 ## Usage Instructions
 **Prerequisites:** 
-- A local SQL database and corresponding server (pgAdmin4 in my case)
+- A local SQL database and corresponding server (I used a PostgreSQL database and pgAdmin4 to facilitate this).
 - Two YAML files containing database credentials:
   - `db_creds.yaml` - File containing the credentials to connect to the source AWS database
-  - `sales_data_creds.yaml` - File containing the credentials to connect to the targest PostgreSQL database
+  - `sales_data_creds.yaml` - File containing the credentials to connect to the target PostgreSQL database
   - This screenshot shows the required template the credential YAML files must follow:
    
     ![TEMPLATE_creds](https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/79969bed-321e-4662-8ee6-9d5fa8102478)
 
-- `api_key_header.yaml` - File containing an X-API-key to be used in the headers of a get request for listing the number of stores in the business.
+- `api_key_header.yaml` - File containing an X-API-key to be used in the headers of a get request for listing the number of stores in the company.
   - This screenshot shows the required format of YAML file containing the API key: 
 
     ![TEMPLATE_x_api_key](https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/e8a3db13-eacc-4b07-bc30-eb435da59b0a)
@@ -85,25 +101,56 @@ In total, I utilised 13 branches:
 <img width="968" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/ebb6fe96-2c4e-4d71-83de-a403204e519c">
 
 ### Milestone 2: Extract and clean the data from the data sources
-#### Task 1: Set up a new database to store the data
+#### Setting up the destination database
 With the GitHub repo set up, it was time to move onto Milestone 2. The goal of this milestone was to extract all of the data from each data source, clean it and then store it in a new database.
 
-I began by creating the a PostgreSQL database using pgAdmin4. This database would act as the destination for the data. To do this, I right-clicked on Databases under the default PostgreSQL server in pgAdmin4. From there, I selected `Create > Database...` 
+I began by creating the a PostgreSQL database using pgAdmin4. To do this, I right-clicked on 'Databases' under the default PostgreSQL server in pgAdmin4. From there, I selected `Create > Database...` 
 
 <img width="873" alt="m2 1 create db3" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/f9bece57-d3c1-4888-9ac9-b78cbd83e0f7">
  
- I named the database 'sales_data' and then moved on to writing my first bit of Python code for this project.
+ I named the database 'sales_data' and then moved on writing the code to extract all the data from each data source.
  
-#### Task 2: Initialise the three project Classes
-To achieve the goal of centralising all of the data, I would need to:
+#### Extracting, cleaning and updating the data
+There would be 3 main interactions with the data for this project:
 
-- Retrieve the data from its source (e.g. Amazon S3 bucket, PDF file, API).
-- Clean the data (e.g. remove non-numeric characters from card numbers, remove any corrupted rows, convert dates to a specific format).
-- Upload the cleaned data to the new database, sales_data.
+- Connecting to databases (the AWS RDS and the destination sales_data database).
+- Extracting the data (e.g. from a PDF or CSV).
+- Cleaning the data (e.g. converting dates to consistent format, removing erroneous entries).
 
-Therefore, I decided that these interactions would be best separated into 3 custom Python classes: 'DataExtractor', 'DatabaseConnector', 'DataCleaning'. I could then create methods for each class to handle any funcitonality I would need, such as extracting data from a PDF file (DataExtractor) or stripping card numbers of any non-numeric characters(DataCleaning).
+Therefore, to keep my code tidy and readable, I utilised the Object Oriented Programming (OOP) principle of encapsulation, separating these interactions into 3 classes (`DataExtractor`, `DatabaseConnector` and `DataCleaning`). Each class contained bespoke functions for each data source and was contained in its own Python script (`data_cleaning.py`, `data_extraction.py` and `database_ults.py`)
 
-Rather than having one
+I then created the `main.py` script which would act as the orchestrator of events in this pipeline. The script follow this typical flow:
+
+- Takes in database credentials, Amazon S3 bucket link or API endpoint (depending on where the data is stored) and extracts the raw data.
+  - If the data is stored in an AWS database, the credentials (in `db_creds.yaml`) are supplied to the `DatabaseConnector` class and a connection is made. The `DataExtractor` class is then used to retrieve contents of the table as a pandas dataframe.
+  - If the data is stored as an S3 bucket object, its link is supplied to `DataExtractor` and the file is processed and returned as a pandas dataframe.
+  - If the data is retrieved via an API GET request, the endpoint is supplied to `DataExtractor` and a GET request is made. The response is returned as a JSON object and converted to a pandas dataframe if required.
+- Cleans the raw data, removing any erroneous data using the `DataCleaning` class
+- Uploads the cleaned data to the destination sales_data database by supplying the credentials (in `sales_data_creds.yaml`) to the `DatabaseConnector` class.
+
+Once the code had been written and tested, I ran `main.py` and could see in pgAdmin4 that the database now contained the following tables:
+
+<img width="148" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/890d1ed3-69ad-4951-bba3-05e9ce85a634">
+
+### Milestone 3: Create the database schema
+With the cleaned data uploaded to the new database, I could begin finalising the database by casting each column to an appropriate data type then relating the tables together so that business analysis could be performed.
+
+To change the data type of a column, I used the query tool in pgAdmin4 and wrote queries with the following syntax:
+
+```
+ALTER TABLE {table_name}
+    ALTER COLUMN {column_name} TYPE {data type};
+```
+This allowed me to correct any instances where a column had been interpreted incorrectly. For example originally the `product_price` column of the `dim_products` table was interpreted as the TEXT data type. As the product prices were always decimal numbers (e.g. £29.99) I converted the column to the FLOAT data type.
+
+After this, I linked the information in the tables together so that business analysis to be performed.
+
+Each table had an identifying column with unique values, referred to as a Universally Unique Identifier (UUID). These columns were used to link information across the tables. For example, the user data table had the `user_uuid` column, the card details table had the `card_number` column and the product data table had the `product code` column. The Orders table consisted of columns which contained the same UUIDs as the other tables. 
+
+Columns such as card numbers, data UUIDs and product codes, which were unique to each entry, were linked to the orders table by casting as UUIDs and setting them as the primary keys for the respective table. creating the schema and ensuring table columns were cast as the correct data types.
+
+The database would form a star-based schema with the Orders table at the centre. The other tables would be related to the orders table via UUIDs
+
 
 ### Milestone 4: Querying the data.
 In this milestone, the goal was to answer a set of business questions using the newly created database.
