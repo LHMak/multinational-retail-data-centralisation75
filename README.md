@@ -40,7 +40,15 @@ This project helped me to consolidate everything I have learned throughout the c
 
 Because of this, my confidence with with all of these skills has grown substantially. I have also come to appreciate just how much I have learnt in the last ~1.5 months.
 
-## Tools used
+## File Structure of Project
+- `.gitignore`: Contains list of files which are not tracked by Git. In particular for this project, database credentials are included in the gitignore file and so, are not uploaded to this Github repository.
+- `LICENSE`: The License (MIT) file for this project.
+- `README.md`: The README markdown file for this project. Contains information about the project's purpose, tools used, file structure, etc.
+- `main.py`: This Python script serves are the main controller of the project processes. It works by calling functions from the DatabseConnector, DataExtractor and DataCleaning classes described in the following 3 Python scripts. By using a main.py script, the data that has been extracted by the DataExtractor can be passed to the DataCleaning class; then to the DatabaseConnector to upload to the centralised PostgreSQL database.
+- `database_utils.py`: This script introduces the DatabaseConnector class, which is responsible for reading database credentials (in the form of a .YAML file); initialising an SQLAlchemy/psycopg2 engine to manage the connection to a database; listing the tables in a databse to allow selection of data for extraction and finally, uploading cleaned data to the target PostgreSQL database.
+- `data_extraction.py`: This script introduces the DataExtractor class, which is responsible for extracting data from a source and generating a pandas dataframe from it if cleaning is required. This class contains 5 extraction functions, which extract from the following source types: RDS tables, PDF documents, APIs, JSON and CSV files.
+- `data_cleaning.py`: This script introduces the DataCleaning class, which is responsible for taking in raw data and cleaning it. The data cleaning methods are different for each data source- but typically, null and erroneous entries are identified and removed, typos are corrected and columns are cast to their intended datatypes.
+- `Milestone_4_Queries.zip`: This `.zip` folder contains 10 `.sql` files. Each file contains a query to answer one of the questions from a business stakeholder.## Tools used
 - Python (with following modules & libraries):
   - Pandas library
   - PandasGUI
@@ -290,6 +298,8 @@ ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2)
 
 Result:
 
+<img width="329" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/529722cc-d4c6-4615-9eef-1bec62c93e45">
+
 The query works by
 
 The resulting table showed that local store branches produced the largest percentage of total sales at 44.87%, whereas outlet stores made up only 8.1% of total sales.
@@ -298,9 +308,23 @@ The resulting table showed that local store branches produced the largest percen
 Query:
 
 ```
+SELECT
+	ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) AS total_sales,
+	dates.year,
+	EXTRACT(MONTH FROM TO_DATE(month, 'Month')) AS "month"
+FROM orders_table orders
+JOIN dim_products products
+	ON products.product_code = orders.product_code
+JOIN dim_date_times dates
+	ON dates.date_uuid = orders.date_uuid
+GROUP BY dates.year, dates.month
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) DESC
+LIMIT 10
 ```
 
 Result:
+
+<img width="283" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/20cc2f2f-ab87-4178-b696-32c673a73cb6">
 
 The query works by
 
@@ -311,9 +335,21 @@ The resulting table showed
 Query:
 
 ```
+SELECT
+	SUM(staff_numbers) AS total_staff_numbers,
+	CASE
+		WHEN country_code = 'N/A' THEN 'GB'
+		ELSE country_code
+	END AS country
+FROM dim_store_details
+GROUP BY country
+ORDER BY SUM(staff_numbers) DESC
 ```
 
 Result:
+
+<img width="239" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/46ae00c2-69a0-4d91-8373-097fe047562b">
+
 
 The query works by
 
@@ -324,9 +360,23 @@ The resulting table showed
 Query:
 
 ```
+SELECT
+	ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) AS total_sales,
+	store.store_type,
+	store.country_code
+FROM dim_store_details store
+JOIN orders_table orders
+	ON orders.store_code = store.store_code
+JOIN dim_products products
+	ON products.product_code = orders.product_code
+WHERE store.country_code = 'DE'
+GROUP BY store.country_code, store.store_type
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) ASC
 ```
 
 Result:
+
+<img width="334" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/c5c30a92-1148-4a59-b642-538ff418a790">
 
 The query works by
 
@@ -337,35 +387,47 @@ The resulting table showed
 Query:
 
 ```
+WITH cte AS(
+	SELECT TO_TIMESTAMP(CONCAT(year, '-', EXTRACT(MONTH FROM TO_DATE(month, 'Month')), '-', day::text, ' ', timestamp), 'YYYY-MM-DD HH24:MI:SS') AS datetimes,
+       year
+	FROM dim_date_times
+),
+
+cte2 AS(
+	SELECT
+		year,
+		datetimes,
+	LEAD(datetimes, 1) OVER (ORDER BY datetimes DESC) AS time_difference
+	FROM cte
+),
+
+cte3 AS (
+	SELECT
+		year, AVG((datetimes - time_difference)) as time_interval
+	FROM cte2
+	GROUP BY year
+	ORDER BY AVG((datetimes - time_difference)) DESC
+	LIMIT 5
+)
+
+SELECT
+	year,
+	CONCAT(
+		'"hours": ', EXTRACT(HOUR FROM time_interval), ',',
+		'"minutes": ', EXTRACT(MINUTE FROM time_interval),',',
+		'"seconds": ', EXTRACT(SECOND FROM time_interval),',',
+		'"milliseconds": ', EXTRACT(MILLISECOND FROM time_interval)
+	) AS actual_time_taken
+FROM cte3
 ```
 
 Result:
 
-The query works by
-
-The resulting table showed
-
-#### Question 10:
-Query:
-
-```
-```
-
-Result:
+<img width="447" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/43e4e3bc-c5ea-45b8-b76a-d6cc012f57d9">
 
 The query works by
 
 The resulting table showed
-
-## File Structure of Project
-- `.gitignore`: Contains list of files which are not tracked by Git. In particular for this project, database credentials are included in the gitignore file and so, are not uploaded to this Github repository.
-- `LICENSE`: The License (MIT) file for this project.
-- `README.md`: The README markdown file for this project. Contains information about the project's purpose, tools used, file structure, etc.
-- `main.py`: This Python script serves are the main controller of the project processes. It works by calling functions from the DatabseConnector, DataExtractor and DataCleaning classes described in the following 3 Python scripts. By using a main.py script, the data that has been extracted by the DataExtractor can be passed to the DataCleaning class; then to the DatabaseConnector to upload to the centralised PostgreSQL database.
-- `database_utils.py`: This script introduces the DatabaseConnector class, which is responsible for reading database credentials (in the form of a .YAML file); initialising an SQLAlchemy/psycopg2 engine to manage the connection to a database; listing the tables in a databse to allow selection of data for extraction and finally, uploading cleaned data to the target PostgreSQL database.
-- `data_extraction.py`: This script introduces the DataExtractor class, which is responsible for extracting data from a source and generating a pandas dataframe from it if cleaning is required. This class contains 5 extraction functions, which extract from the following source types: RDS tables, PDF documents, APIs, JSON and CSV files.
-- `data_cleaning.py`: This script introduces the DataCleaning class, which is responsible for taking in raw data and cleaning it. The data cleaning methods are different for each data source- but typically, null and erroneous entries are identified and removed, typos are corrected and columns are cast to their intended datatypes.
-- `Milestone_4_Queries.zip`: This `.zip` folder contains 10 `.sql` files. Each file contains a query to answer one of the questions from a business stakeholder.
 
 ## License Information
 This project is licensed under the terms of the MIT license.
