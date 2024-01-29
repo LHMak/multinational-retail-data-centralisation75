@@ -135,6 +135,8 @@ Once the code had been written and tested, I ran `main.py` and could see in pgAd
 ### Milestone 3: Create the database schema
 With the cleaned data uploaded to the new database, I could begin finalising the database by casting each column to an appropriate data type then relating the tables together so that business analysis could be performed.
 
+#### Casting columns to correct data type
+
 To change the data type of a column, I used the query tool in pgAdmin4 and wrote queries with the following syntax:
 
 ```
@@ -143,18 +145,41 @@ ALTER TABLE {table_name}
 ```
 This allowed me to correct any instances where a column had been interpreted incorrectly. For example originally the `product_price` column of the `dim_products` table was interpreted as the TEXT data type. As prices are always decimal numbers (e.g. 29.99) I converted the column to the FLOAT data type.
 
+#### Creating the database schema
+
 After this repeating this for each column in the database, I linked the information in the tables together so that business analysis to be performed.
 
 Each table had a column in which each entry was unique and could be used to identify the entry (e.g. the `user_uuid` column of the user data table or the `product_code` of the product data table). This type of column is referred to as a Universally Unique Identifier (UUID). These UUID columns were also present in the orders table, meaning that information could be linked between different tables via the orders table.
 
-For example, to find which months products the most sales I could link the products table to the orders table via the `product_code` UUID, then link the date events table to the orders table via the `date_uuid` column. This would allow all me to a transaction from a specific date and time, find its `date_uuid` in the orders table, refer to the corresponding `product_code` and find the product in the products table.
+For example to find which item was sold for a transaciton made at a specific date and time, I could link the date events table to the orders table via the `date_uuid` column and link the products table to the orders table via the `product_code` UUID. This would allow all me to look at the `date_uuid` of an entry in the date events table, find the row in the orders table with the same `date_uuid`, refer to the corresponding `product_code` and then refer to this `product_code` in the products table to see which product was sold in the transaction.
 
 By linking the tables like this, I created a star-based schema with the orders table at the centre:
 
 ![image](https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/62bcb96b-aa63-4675-880b-7a79cb8a6c45)
 
+In the diagram, it can be seen that each table has been linked to the orders table by the UUID columns. To create these relationships I had to set the UUID columns of the store data, card data, product data, date events and user data tables as their respective primary keys. Then I set the UUID columns of the orders table as foreign keys which referenced the primary key columnd of the other tables.
 
+I acomplished this by executing the following queries:
 
+*Setting a column as the primary key*
+```
+ALTER TABLE [TABLE_NAME]
+ADD CONSTRAINT [NAME_FOR_CONSTRAINT]
+PRIMARY KEY [COLUMN_NAME];
+```
+
+*Setting a column as foreign key in orders table*
+```
+ALTER TABLE orders_table
+ADD CONSTRAINT [NAME_FOR_CONSTRAINT]
+FOREIGN KEY [COLUMN_NAME]
+REFERENCES [TABLE_NAME] [COLUMN_NAME]);
+```
+Here is an example of this process in action to link the card data table to the orders table via the `card_number` column:
+
+<img width="995" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/df2c8d37-0358-42d5-af95-f6004e6d0f30">
+
+Once I had completed this process for all of the tables, I had successfully centralised all of the company data from each data source and created a robust database which I could now use to perform business analysis.
 
 ### Milestone 4: Querying the data.
 In this milestone, the goal was to answer a set of business questions using the newly created database.
