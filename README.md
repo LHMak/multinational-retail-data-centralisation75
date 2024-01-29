@@ -295,7 +295,7 @@ JOIN dim_products products
 JOIN dim_store_details store
 	ON store.store_code = orders.store_code
 GROUP BY store.store_type
-ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) DESC
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) DESC;
 ```
 
 Result:
@@ -321,7 +321,7 @@ JOIN dim_date_times dates
 	ON dates.date_uuid = orders.date_uuid
 GROUP BY dates.year, dates.month
 ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) DESC
-LIMIT 10
+LIMIT 10;
 ```
 
 Result:
@@ -345,7 +345,7 @@ SELECT
 	END AS country
 FROM dim_store_details
 GROUP BY country
-ORDER BY SUM(staff_numbers) DESC
+ORDER BY SUM(staff_numbers) DESC;
 ```
 
 Result:
@@ -373,7 +373,7 @@ JOIN dim_products products
 	ON products.product_code = orders.product_code
 WHERE store.country_code = 'DE'
 GROUP BY store.country_code, store.store_type
-ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) ASC
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) ASC;
 ```
 
 Result:
