@@ -218,21 +218,145 @@ Result:
 
 The query works by grouping all of the entries from the store data table by the `locality` field and counting the number of entries in each group. These counts are then ordered in descending order so that the locality with the most entries appears at the top. Finally, the locality column and the count of stores are returned. As with the last question, the `WHERE country_code != 'N/A'` clause is included to exclude the company's online store.
 
-#### Question 3:
+The resulting table showed the location with the most stores was Chapeltown with 14 stores.
 
-#### Question 4:
+#### Question 3: Which months produced the largest amount of sales?
+Query:
+```
+SELECT
+	ROUND(SUM(dim_products.product_price * orders_table.product_quantity)::numeric,2) AS "total_sales",
+	EXTRACT(MONTH FROM TO_DATE(month, 'Month')) AS "month"
+FROM orders_table
+JOIN dim_products ON dim_products.product_code = orders_table.product_code
+JOIN dim_date_times ON dim_date_times.date_uuid = orders_table.date_uuid
+GROUP BY EXTRACT(MONTH FROM TO_DATE(month, 'Month'))
+ORDER BY SUM(dim_products.product_price * orders_table.product_quantity) DESC
+LIMIT 6;
+```
 
-#### Question 5:
+Result:
+
+<img width="215" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/c1eb3f3a-5312-4636-bdad-6389f2396407">
+
+This query works by joining the products data to the orders table by matching the `product_code` columns. The date events table is also joined to the orders table via their `date_uuid` columns. After this, the results are grouped by the month the entry takes place. The product prices are then multiplied by the quantity bought in the order, calculating the value of the sale, then sorted in descending order. A limit clause is provided to only show the first 6 results. Finally, the sum of all sales values for each month is returned as a column called `total_sales` and a column of the corresponding month is returned.
+
+The resulting table showed that July produced the most sales at £673295.68, whereas March produced the 6th most sales of any month at £645463.00.
+
+#### Question 4: How many sales are coming from the online store?
+Query:
+```
+SELECT
+	COUNT(*) AS number_of_sales,
+	SUM(orders_table.product_quantity) AS product_quantity_count,
+	CASE
+		WHEN dim_store_details.store_type = 'Web Portal' THEN 'Web'
+		ELSE 'Offline'
+	END AS "location"
+FROM orders_table
+JOIN dim_store_details ON dim_store_details.store_code = orders_table.store_code
+GROUP BY "location"
+ORDER BY COUNT(*) ASC;
+```
+
+Result:
+
+<img width="311" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/7ab71be9-5db5-4907-8a75-1874e4185eee">
+
+This query works by joining the store data table to the orders table by the `store_code` UUID column then grouping all of the rows by the `location` field of the store data table. The number of entries in each location is counted, indicating the `number_of_sales`. Next, the `product_quantity` column of the orders table is totalled (`product_quantity_count`). Finally, the CASE clause is used to return a column, `location`, in which any store a `store_type` value of `Web Portal` is labelled `Web` and any other value is labeleld `Offline`.
+
+The resulting table showed that the online store produced 26,957 sales of 107,739 products, whereas physical stores produced 93,166 sales of 374,047 products.
+
+#### Question 5: What percentage of sales come through each type of store?
+Query:
+
+```
+SELECT
+	store.store_type,
+	ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) AS total_sales,
+	ROUND((SUM(products.product_price * orders.product_quantity) /
+	(
+		SELECT SUM(dim_products.product_price * orders_table.product_quantity)
+		FROM orders_table
+		JOIN dim_products ON dim_products.product_code = orders_table.product_code
+	) * 100)::numeric, 2) AS "percentage_total"
+FROM orders_table orders
+JOIN dim_products products
+	ON products.product_code = orders.product_code
+JOIN dim_store_details store
+	ON store.store_code = orders.store_code
+GROUP BY store.store_type
+ORDER BY ROUND(SUM(products.product_price * orders.product_quantity)::numeric,2) DESC
+```
+
+Result:
+
+The query works by
+
+The resulting table showed that local store branches produced the largest percentage of total sales at 44.87%, whereas outlet stores made up only 8.1% of total sales.
 
 #### Question 6:
+Query:
+
+```
+```
+
+Result:
+
+The query works by
+
+The resulting table showed
+
 
 #### Question 7:
+Query:
+
+```
+```
+
+Result:
+
+The query works by
+
+The resulting table showed
+
 
 #### Question 8:
+Query:
+
+```
+```
+
+Result:
+
+The query works by
+
+The resulting table showed
+
 
 #### Question 9:
+Query:
+
+```
+```
+
+Result:
+
+The query works by
+
+The resulting table showed
 
 #### Question 10:
+Query:
+
+```
+```
+
+Result:
+
+The query works by
+
+The resulting table showed
+
 ## File Structure of Project
 - `.gitignore`: Contains list of files which are not tracked by Git. In particular for this project, database credentials are included in the gitignore file and so, are not uploaded to this Github repository.
 - `LICENSE`: The License (MIT) file for this project.
