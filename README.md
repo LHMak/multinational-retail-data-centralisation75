@@ -182,10 +182,57 @@ Here is an example of this process in action to link the card data table to the 
 Once I had completed this process for all of the tables, I had successfully centralised all of the company data from each data source and created a robust database which I could now use to perform business analysis.
 
 ### Milestone 4: Querying the data.
-In this milestone, the goal was to answer a set of business questions using the newly created database.
+In this milestone, the goal was to query the new database to answer a set of business questions posed by the senior team of the company. There were 10 questions in total and the `.sql` files for the queries can be found in [Milestone_4_Queries.zip](Milestone_4_Queries.zip)
 
-The questions were:
+#### Question 1: How many stores does the business have and in which countries?
+Query:
+```
+SELECT country_code AS "country", count(country_code) AS "total_no_stores"
+FROM dim_store_details
+WHERE country_code != 'N/A'
+GROUP BY country_code;
+```
 
+Result:
+
+<img width="239" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/3ad6e231-74e9-4d39-b118-72f4daec8201">
+
+The query works by grouping the rows in the store data table by country code (e.g. UK, DE, US) then counting the number of stores in each group. The business also owns an online store, which does not have a country code, so the `WHERE country_code != 'N/A'` clause was included to exclude this from the results.
+
+The resulting table showed the company has 265 stores in Great Britain, 141 in Germany and 34 stores in the United States.
+
+#### Question 2: Which locations currently have the most stores?
+Query:
+```
+SELECT locality, count(locality) AS "total_no_stores"
+FROM dim_store_details
+WHERE country_code != 'N/A'
+GROUP BY locality
+ORDER BY count(locality) DESC
+LIMIT 7;
+```
+
+Result:
+
+<img width="241" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/3c9808a2-834d-4e6f-9a78-4feab468ab00">
+
+The query works by grouping all of the entries from the store data table by the `locality` field and counting the number of entries in each group. These counts are then ordered in descending order so that the locality with the most entries appears at the top. Finally, the locality column and the count of stores are returned. As with the last question, the `WHERE country_code != 'N/A'` clause is included to exclude the company's online store.
+
+#### Question 3:
+
+#### Question 4:
+
+#### Question 5:
+
+#### Question 6:
+
+#### Question 7:
+
+#### Question 8:
+
+#### Question 9:
+
+#### Question 10:
 ## File Structure of Project
 - `.gitignore`: Contains list of files which are not tracked by Git. In particular for this project, database credentials are included in the gitignore file and so, are not uploaded to this Github repository.
 - `LICENSE`: The License (MIT) file for this project.
