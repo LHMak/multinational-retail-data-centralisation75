@@ -48,7 +48,9 @@ Because of this, my confidence with with all of these skills has grown substanti
 - `database_utils.py`: This script introduces the DatabaseConnector class, which is responsible for reading database credentials (in the form of a .YAML file); initialising an SQLAlchemy/psycopg2 engine to manage the connection to a database; listing the tables in a databse to allow selection of data for extraction and finally, uploading cleaned data to the target PostgreSQL database.
 - `data_extraction.py`: This script introduces the DataExtractor class, which is responsible for extracting data from a source and generating a pandas dataframe from it if cleaning is required. This class contains 5 extraction functions, which extract from the following source types: RDS tables, PDF documents, APIs, JSON and CSV files.
 - `data_cleaning.py`: This script introduces the DataCleaning class, which is responsible for taking in raw data and cleaning it. The data cleaning methods are different for each data source- but typically, null and erroneous entries are identified and removed, typos are corrected and columns are cast to their intended datatypes.
-- `Milestone_4_Queries.zip`: This `.zip` folder contains 10 `.sql` files. Each file contains a query to answer one of the questions from a business stakeholder.## Tools used
+- `Milestone_4_Queries.zip`: This `.zip` folder contains 9 `.sql` files. Each file contains a query to answer one of the questions from a business stakeholder.
+
+## Tools used
 - Python (with following modules & libraries):
   - Pandas library
   - PandasGUI
@@ -190,7 +192,7 @@ Here is an example of this process in action to link the card data table to the 
 Once I had completed this process for all of the tables, I had successfully centralised all of the company data from each data source and created a robust database which I could now use to perform business analysis.
 
 ### Milestone 4: Querying the data.
-In this milestone, the goal was to query the new database to answer a set of business questions posed by the senior team of the company. There were 10 questions in total and the `.sql` files for the queries can be found in [Milestone_4_Queries.zip](Milestone_4_Queries.zip)
+In this milestone, the goal was to query the new database to answer a set of business questions posed by the senior team of the company. There were 9 questions in total and the `.sql` files for the queries can be found in [Milestone_4_Queries.zip](Milestone_4_Queries.zip)
 
 #### Question 1: How many stores does the business have and in which countries?
 Query:
@@ -304,7 +306,7 @@ The query works by
 
 The resulting table showed that local store branches produced the largest percentage of total sales at 44.87%, whereas outlet stores made up only 8.1% of total sales.
 
-#### Question 6:
+#### Question 6: Which month in each year produced the highest cost of sales?
 Query:
 
 ```
@@ -331,7 +333,7 @@ The query works by
 The resulting table showed
 
 
-#### Question 7:
+#### Question 7: What is our staff headcount?
 Query:
 
 ```
@@ -356,7 +358,7 @@ The query works by
 The resulting table showed
 
 
-#### Question 8:
+#### Question 8: Which German store type is selling the most?
 Query:
 
 ```
@@ -383,7 +385,7 @@ The query works by
 The resulting table showed
 
 
-#### Question 9:
+#### Question 9: How quickly is the company making sales?
 Query:
 
 ```
