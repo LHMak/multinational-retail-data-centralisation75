@@ -352,7 +352,7 @@ Result:
 
 The query works by grouping each store in the store data table by the `country` field. The sum of the `staff_numbers` field is calculated, giving the total number of staff members in each country. The results are then ordered in descending order so that country with the highest head count is displayed first. Finally, the SELECT clause shows the sum of `staff_numbers` as the `total_staff_numbers` column and a `country` column. A `CASE` clause is used to include the online store in the count for Great Britain. This is because the online store does not have a `country_code` in the database.
 
-The resulting table showed that Great Britain had the highest staff headcount at 13307 people, followed by Germany (6123) and then the United States (1384)
+The resulting table showed that Great Britain had the highest staff headcount at 13307 people, followed by Germany (6123) and then the United States (1384).
 
 
 #### Question 8: Which German store type is selling the most?
@@ -424,9 +424,9 @@ Result:
 
 <img width="447" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/43e4e3bc-c5ea-45b8-b76a-d6cc012f57d9">
 
-The query works by
+The query works by creating 3 common table expressions: cte, cte2, cte3 (rather unhelpful names I must admit). CTE looks at the date events table and concatenates the `year`, `month` and `day` fields together. 
 
-The resulting table showed
+The resulting table showed that in 2013, the average time between sales was around 2:17 minutes; 2:15 in 1993 and 2:13 in 2002.
 
 ## License Information
 This project is licensed under the terms of the MIT license.
