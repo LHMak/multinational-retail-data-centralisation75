@@ -98,9 +98,7 @@ Because of this, my confidence with with all of these skills has grown substanti
 Once these prerequisites are satisfied, just run main.py and when the script has terminated, your local database should hold the following tables: dim_card_details, dim_date_times, dim_products, dim_store_details, dim_users and orders_table.
 
 ## Project write-up
-In this section, I explain how I completed this project, the methods and software I used and challenges I faced.
-
-The project was split up into 4 stages, or 'Milestones.' Each Milestone is explained below.
+In this section, I explain how I completed this project. The project was split up into 4 stages, or 'Milestones.' Each Milestone is explained below.
 
 ### Milestone 1: Set up the environment
 This project was split up into 4 milestones. This first milestone's goal was to set up this GitHub repository so I could save my code and track any changes.
@@ -328,10 +326,9 @@ Result:
 
 <img width="283" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/20cc2f2f-ab87-4178-b696-32c673a73cb6">
 
-The query works by
+The query works by joining the product data table to the orders table by matching their `product_code` UUID columns. The date event data is also joined to the orders table by matching the `date_uuid` columns. The data is then grouped by year, then by month. For each sale, the product price is multiplied by the quantity purchased, rounded to 2 decimal places (to work out the total value of each sale). After this, all of the sales in each month are added together (to calculate the total value of sales in the month). These monthly sales values are ordered in descending order, so the most profitable months are displayed first. The results are limited to the top 10 performing months. Finally, the total sales in the month is displayed as the `total_sales` column, the year and corresponding month columns are also displayed.
 
-The resulting table showed
-
+The resulting table showed that in 1994 the month with the most sales was March at £27936.77. This was the biggest monthly gross profit in the company's recorded history. The next highest monthly sale was from Janurary 2019, then August of 2009.
 
 #### Question 7: What is our staff headcount?
 Query:
@@ -353,9 +350,9 @@ Result:
 <img width="239" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/46ae00c2-69a0-4d91-8373-097fe047562b">
 
 
-The query works by
+The query works by grouping each store in the store data table by the `country` field. The sum of the `staff_numbers` field is calculated, giving the total number of staff members in each country. The results are then ordered in descending order so that country with the highest head count is displayed first. Finally, the SELECT clause shows the sum of `staff_numbers` as the `total_staff_numbers` column and a `country` column. A `CASE` clause is used to include the online store in the count for Great Britain. This is because the online store does not have a `country_code` in the database.
 
-The resulting table showed
+The resulting table showed that Great Britain had the highest staff headcount at 13307 people, followed by Germany (6123) and then the United States (1384)
 
 
 #### Question 8: Which German store type is selling the most?
@@ -380,9 +377,9 @@ Result:
 
 <img width="334" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/c5c30a92-1148-4a59-b642-538ff418a790">
 
-The query works by
+The query works by joining the orders table to the store data table by their `store_code` UUID columns. The product data table is also joined to the orders table via their `product_code` field. The records are filtered in the `WHERE` clause to select only stores with the `country_code` for Germany. The results are grouped by `country_code`, then `store_type`. Next, for each entry the value of each sale is calculated by multiplying the `product_price` and `product_quantity` fields, rounded to 2 decimal places (as it is a value of currency). Finally, for each store type, the value of each sale is summated and presented in the `total_sales` column. In the `SELECT` clause the `store_type` and `country_code` columns are also provided.
 
-The resulting table showed
+The resulting table showed that in Germany, local stores produced more sales in total than any other type of store, whereas outlet stores produced the least.
 
 
 #### Question 9: How quickly is the company making sales?
