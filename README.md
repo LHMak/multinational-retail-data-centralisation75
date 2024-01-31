@@ -424,9 +424,15 @@ Result:
 
 <img width="447" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/43e4e3bc-c5ea-45b8-b76a-d6cc012f57d9">
 
-The query works by creating 3 common table expressions: cte, cte2, cte3 (rather unhelpful names I must admit). CTE looks at the date events table and concatenates the `year`, `month` and `day` fields together. 
+The query works by creating 3 common table expressions (CTE): cte, cte2, cte3 (rather unhelpful names I must admit). The first CTE, `cte`, looks at each entry in the date events table and concatenates the `year`, `month` and `day` fields together. This is then converted to a timestamp object in the YYYY-MM-DD HH:MM:SS format.
 
-The resulting table showed that in 2013, the average time between sales was around 2:17 minutes; 2:15 in 1993 and 2:13 in 2002.
+The second CTE, `cte2`, uses the table created in `cte` and a `LEAD` expression to select one entry and the timestamp of the next entry. This produces a table with 3 columns: year, timestamp and the timestamp of the next sale.
+
+The third CTE, `cte3` uses the table from `cte2`, groups each row by year and then averages the difference between the timestamp of one sale and the timestamp of the next sale. This produces a table with 2 columns: year and average time between sales (`time_interval`). 
+
+Finally, a master query uses `cte3` and changes the format of the `time_interval` to display in the following format: HH hours: MM minutes: SS seconds, etc.
+
+The resulting table showed that in all years the time between sales is around a little over 2 minutes. For example, in 2013 the average time between sales was around 2:17 minutes; 2:15 in 1993 and 2:13 in 2002.
 
 ## License Information
 This project is licensed under the terms of the MIT license.
