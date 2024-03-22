@@ -300,7 +300,9 @@ Result:
 
 <img width="329" alt="image" src="https://github.com/LHMak/multinational-retail-data-centralisation75/assets/147920042/529722cc-d4c6-4615-9eef-1bec62c93e45">
 
-The query works by
+The query works by joining the product data table and store data tables to the orders table on the `product_code` and `store_code` UUID columns respectively. The rows are grouped by `store_type` (e.g. mall kiosk, outlet store or super store). The total sales for each group (store type) is calculated by multiplying the product prices by the number times each product was ordered.
+
+The SELECT clause returns the store type, total sales and percentage each store type makes up of the total sales (returned as percentage_total column). This last column is generated with a subquery. The subquery is used in the SELECT clause to calculate the percentage each store type makes of the total sales. It does this by joining the product data table to the orders table on their `product_code` UUID columns and calculating total sales (like in the master query) by multiplying price of each product by the quantity of the products ordered. 
 
 The resulting table showed that local store branches produced the largest percentage of total sales at 44.87%, whereas outlet stores made up only 8.1% of total sales.
 
